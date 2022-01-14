@@ -3,6 +3,7 @@ import sql_wrapper #SQL functions to search database
 import subprocess #To use kakasi to convert to kana
 import json #To handle opening the deconjugation list may remove
 import re #To check if a word ends with a given string. May remove
+import concurrent.futures # To execute searches in parallel
 
 
 '''
@@ -60,11 +61,20 @@ def deconjugate_word(word, col, db, deconjugation_list):
 
 
 
+#WIP
+def parallel_starts_with_search(sentance, col, db, deconjugate_json):
+    executrer = concurrent.futures.ProcessPoolExecutor()
+    subsentances = map(lambda x: sentance[0:x+1], range(len(sentance)))
+    ex_fun = lambda x: deconjugate_word(x, col, db, deconjugate_json)
+    possiblities = list(executrer.map(ex_fun, subsentances))
+    return possiblities
+
+
 
 def starts_with_search(sentance, col, db, deconjugate_json):
     results = []
     i = len(sentance)
-    while i > 1 and len(results) < 10:
+    while i > 0 and len(results) < 10:
         substring = sentance[0:i]
         if sql_wrapper.exists_word(substring, db):
             results.append(substring)
@@ -169,4 +179,8 @@ def has_katakana(sentance):
             return True
     return False
 
+
+
+def start_lookup(word, db):
+    return starts_with_search(word, 'word', db, 'deinflect.json')
 
