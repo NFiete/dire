@@ -79,7 +79,6 @@ class TextViewWindow(Gtk.Window):
 
 
     def on_key_press_event(self, widget, event):
-
         key_name = Gdk.keyval_name(event.keyval)
         if self.next_mark:
             self.add_mark(widget, event)
@@ -138,7 +137,7 @@ class TextViewWindow(Gtk.Window):
             # TODO: see above. Also this doesn't totally work for paragraphs
             cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
             loc = self.textview.get_cursor_locations()[0]
-            new_cur = self.textview.get_iter_at_location(loc.x, loc.y - loc.height*.1)[1]
+            new_cur = self.textview.get_iter_at_location(loc.x, loc.y - loc.height*.5)[1]
             self.textbuffer.place_cursor(new_cur)
         elif key_name == 'q':
             buf = self.textview.get_buffer()
@@ -158,6 +157,21 @@ class TextViewWindow(Gtk.Window):
             self.next_mark = True
         elif key_name == 'apostrophe':
             self.next_jump = True
+        elif key_name == 'a':
+            buf = self.textview.get_buffer()
+            cur_cur = buf.get_iter_at_mark(buf.get_insert())
+            cur_cur2 = cur_cur.copy()
+            cur_cur2.forward_line()
+            cur_text = buf.get_text(cur_cur, cur_cur2, False)
+            con = sql_wrapper.startConnection('dicts.db')
+            words = japanese.start_lookup(cur_text[0:min(len(cur_text), 20)],
+                    con)
+            hits = []
+            for word in words:
+                hits.append(sql_wrapper.searchWord(word, con, ['shinmeikai', 'jm']))
+            new_text = sql_wrapper.all_hits_to_string(hits)
+            win = TextViewWindow(self.title + '_0', new_text)
+            win.show_all()
         elif key_name == 'e':
             buf = self.textbuffer
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
@@ -175,7 +189,6 @@ class TextViewWindow(Gtk.Window):
             win = TextViewWindow(self.title + '_0', new)
             win.show_all()
 
-            print(key_name)
 
         elif key_name == 'g':
             self.textbuffer.place_cursor(self.textbuffer.get_iter_at_offset(0))

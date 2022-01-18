@@ -33,6 +33,20 @@ def toString(hit):
     return out
 
 
+def hits_to_string(hits):
+    strs=[]
+    for hit in hits:
+        strs.append(toString(hit))
+    return '---------------------------\n'.join(strs)
+
+
+def all_hits_to_string(all_hits):
+    strs=[]
+    for hit in all_hits:
+        strs.append(hits_to_string(hit))
+    return '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n'.join(strs)
+
+
 def displayWords(wordList):
     for word in wordList:
         print(word[0])
