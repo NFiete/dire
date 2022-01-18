@@ -54,22 +54,65 @@ class TextViewWindow(Gtk.Window):
         self.connect("key-press-event",self.on_key_press_event)
         self.to_begining()
 
+        self.next_mark = False
+        self.next_jump = False
+
     def to_begining(self):
         self.textbuffer.place_cursor(self.textview.get_buffer().get_iter_at_offset(0))
 
     def set_text(self, new_text):
         self.textbuffer.set_text(new_text)
 
-    def on_key_press_event(self, widget, event):
+    def add_mark(self, widget, event):
+        cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
         key_name = Gdk.keyval_name(event.keyval)
-        if key_name == 'Escape':
+        self.textbuffer.create_mark(mark_name=key_name, where = cur_cur)
+        self.next_mark = False
+
+    def jump_mark(self, mark):
+        my_mark = self.textbuffer.get_mark(mark)
+        if my_mark == None:
+            return
+        itr = self.textbuffer.get_iter_at_mark(my_mark)
+        self.next_jump = False
+        self.textbuffer.place_cursor(itr)
+
+
+    def on_key_press_event(self, widget, event):
+
+        key_name = Gdk.keyval_name(event.keyval)
+        if self.next_mark:
+            self.add_mark(widget, event)
+            return
+        if self.next_jump:
+            self.jump_mark(key_name)
+        elif key_name == 'Escape':
             print(not self.textview.get_editable())
             self.textview.set_editable(not self.textview.get_editable())
-        elif key_name == 't':
-            self.set_text('blah blah blah')
-            #dialog = SearchDialog(self)
-            #response = dialog.run()
-            #dialog.destroy()
+        elif key_name == 'w':
+            cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
+            prev_cur = cur_cur.copy()
+            prev_cur.forward_char()
+
+            cur_text = ''
+            while not japanese.has_kanji(cur_text):
+                if not prev_cur.forward_char():
+                    break
+                cur_cur.forward_char()
+                cur_text = self.textbuffer.get_text(cur_cur, prev_cur, False)
+            self.textbuffer.place_cursor(cur_cur)
+        elif key_name == 'b':
+            cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
+            prev_cur = cur_cur.copy()
+            prev_cur.backward_char()
+
+            cur_text = ''
+            while not japanese.has_kanji(cur_text):
+                if not prev_cur.backward_char():
+                    break
+                cur_cur.backward_char()
+                cur_text = self.textbuffer.get_text(prev_cur, cur_cur, False)
+            self.textbuffer.place_cursor(cur_cur)
         elif key_name == 'l':
             buf = self.textview.get_buffer()
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
@@ -111,7 +154,11 @@ class TextViewWindow(Gtk.Window):
                 new += word + "\n"
             win = TextViewWindow(self.title + '_0', new)
             win.show_all()
-        elif key_name == 'w':
+        elif key_name == 'm':
+            self.next_mark = True
+        elif key_name == 'apostrophe':
+            self.next_jump = True
+        elif key_name == 'e':
             buf = self.textbuffer
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
             cur_cur2 = cur_cur.copy()
@@ -131,7 +178,9 @@ class TextViewWindow(Gtk.Window):
             print(key_name)
 
         elif key_name == 'g':
-            self.textview.get_buffer().place_cursor(self.textview.get_buffer().get_iter_at_offset(0))
+            self.textbuffer.place_cursor(self.textbuffer.get_iter_at_offset(0))
+        elif key_name == 'G':
+            self.textbuffer.place_cursor(self.textbuffer.get_end_iter())
         elif key_name == 'p':
             self.size +=1
             tag = self.textbuffer.create_tag("font_size",
@@ -144,6 +193,7 @@ class TextViewWindow(Gtk.Window):
                     font_desc=Pango.FontDescription.from_string(str(self.size)))
             self.textbuffer.apply_tag(tag, self.textbuffer.get_start_iter(),
                     self.textbuffer.get_end_iter())
+        print(key_name)
 
 
 
@@ -164,6 +214,8 @@ class TextViewWindow(Gtk.Window):
             "underline", underline=Pango.Underline.SINGLE
         )
         self.tag_found = self.textbuffer.create_tag("found", background="yellow")
+        self.textview.set_wrap_mode(Gtk.WrapMode.CHAR)
+
 
     def create_buttons(self):
         check_editable = Gtk.CheckButton(label="Editable")
@@ -178,26 +230,6 @@ class TextViewWindow(Gtk.Window):
             check_cursor, check_editable, Gtk.PositionType.RIGHT, 1, 1
         )
 
-        radio_wrapnone = Gtk.RadioButton.new_with_label_from_widget(None, "No Wrapping")
-        self.grid.attach(radio_wrapnone, 0, 3, 1, 1)
-
-        radio_wrapchar = Gtk.RadioButton.new_with_label_from_widget(
-            radio_wrapnone, "Character Wrapping"
-        )
-        self.grid.attach_next_to(
-            radio_wrapchar, radio_wrapnone, Gtk.PositionType.RIGHT, 1, 1
-        )
-
-        radio_wrapword = Gtk.RadioButton.new_with_label_from_widget(
-            radio_wrapnone, "Word Wrapping"
-        )
-        self.grid.attach_next_to(
-            radio_wrapword, radio_wrapchar, Gtk.PositionType.RIGHT, 1, 1
-        )
-
-        radio_wrapnone.connect("toggled", self.on_wrap_toggled, Gtk.WrapMode.NONE)
-        radio_wrapchar.connect("toggled", self.on_wrap_toggled, Gtk.WrapMode.CHAR)
-        radio_wrapword.connect("toggled", self.on_wrap_toggled, Gtk.WrapMode.WORD)
 
     def on_button_clicked(self, widget, tag):
         bounds = self.textbuffer.get_selection_bounds()
@@ -215,12 +247,5 @@ class TextViewWindow(Gtk.Window):
 
     def on_cursor_toggled(self, widget):
         self.textview.set_cursor_visible(widget.get_active())
-
-    def on_wrap_toggled(self, widget, mode):
-        self.textview.set_wrap_mode(mode)
-
-    def on_justify_toggled(self, widget, justification):
-        self.textview.set_justification(justification)
-
 
 
