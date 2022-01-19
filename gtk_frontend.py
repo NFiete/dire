@@ -1,5 +1,6 @@
 import japanese
 import sql_wrapper
+from search_dialog import SearchDialog
 
 import gi
 
@@ -7,37 +8,6 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Pango
 from gi.repository import Gdk
 
-
-
-class SearchDialog(Gtk.Dialog):
-    def __init__(self, parent, default):
-        super().__init__(title="Search", transient_for=parent, modal=True)
-        self.add_buttons(
-            "Exact",
-            0,
-            "Regex",
-            1,
-            Gtk.STOCK_CANCEL,
-            -1,
-        )
-
-        self.default = default
-
-        box = self.get_content_area()
-
-        label = Gtk.Label(label="Search")
-        box.add(label)
-
-        self.entry = Gtk.Entry()
-        box.add(self.entry)
-
-        self.connect("key-press-event", self.enter_return)
-        self.show_all()
-
-    def enter_return(self, widget, event):
-        key_name = Gdk.keyval_name(event.keyval)
-        if key_name == 'Return':
-            self.response(self.default)
 
 
 class TextViewWindow(Gtk.Window):
@@ -53,9 +23,9 @@ class TextViewWindow(Gtk.Window):
         self.create_textview(text)
         self.textview.set_editable(False)
         self.size = 23
-        tag = self.textbuffer.create_tag("font_size",
+        self.font_tag = self.textbuffer.create_tag("font_size",
                 font_desc=Pango.FontDescription.from_string(str(self.size)))
-        self.textbuffer.apply_tag(tag, self.textbuffer.get_start_iter(),
+        self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
                 self.textbuffer.get_end_iter())
         #self.textview.set_left_margin(100)
         self.create_buttons()
@@ -65,11 +35,33 @@ class TextViewWindow(Gtk.Window):
         self.next_mark = False
         self.next_jump = False
 
+    def set_font_size(self):
+        self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
+                self.textbuffer.get_end_iter())
+
+    def increase_font_size(self):
+        self.textbuffer.get_tag_table().remove(self.font_tag)
+        self.size+=1
+        self.font_tag = self.textbuffer.create_tag("font_size",
+                font_desc=Pango.FontDescription.from_string(str(self.size)))
+        self.set_font_size()
+
+
+    def decrease_font_size(self):
+        if(self.size > 2):
+            self.textbuffer.get_tag_table().remove(self.font_tag)
+            self.size-=1
+            self.font_tag = self.textbuffer.create_tag("font_size",
+                    font_desc=Pango.FontDescription.from_string(str(self.size)))
+            self.set_font_size()
+
+
     def to_begining(self):
         self.textbuffer.place_cursor(self.textview.get_buffer().get_iter_at_offset(0))
 
     def set_text(self, new_text):
         self.textbuffer.set_text(new_text)
+        self.set_font_size()
 
     def add_mark(self, widget, event):
         cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
@@ -215,12 +207,10 @@ class TextViewWindow(Gtk.Window):
                     font_desc=Pango.FontDescription.from_string(str(self.size)))
             self.textbuffer.apply_tag(tag, self.textbuffer.get_start_iter(),
                     self.textbuffer.get_end_iter())
-        elif key_name == '-':
-            self.size -=1
-            tag = self.textbuffer.create_tag("font_size",
-                    font_desc=Pango.FontDescription.from_string(str(self.size)))
-            self.textbuffer.apply_tag(tag, self.textbuffer.get_start_iter(),
-                    self.textbuffer.get_end_iter())
+        elif key_name == 'minus':
+            self.decrease_font_size()
+        elif key_name == 'plus':
+            self.increase_font_size()
         elif key_name == 's':
             search = SearchDialog(self, 0)
             response = search.run()
