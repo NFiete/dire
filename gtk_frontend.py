@@ -10,7 +10,7 @@ from gi.repository import Gdk
 
 
 class SearchDialog(Gtk.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, default):
         super().__init__(title="Search", transient_for=parent, modal=True)
         self.add_buttons(
             "Exact",
@@ -21,6 +21,8 @@ class SearchDialog(Gtk.Dialog):
             -1,
         )
 
+        self.default = default
+
         box = self.get_content_area()
 
         label = Gtk.Label(label="Search")
@@ -29,7 +31,13 @@ class SearchDialog(Gtk.Dialog):
         self.entry = Gtk.Entry()
         box.add(self.entry)
 
+        self.connect("key-press-event", self.enter_return)
         self.show_all()
+
+    def enter_return(self, widget, event):
+        key_name = Gdk.keyval_name(event.keyval)
+        if key_name == 'Return':
+            self.response(self.default)
 
 
 class TextViewWindow(Gtk.Window):
@@ -51,7 +59,7 @@ class TextViewWindow(Gtk.Window):
                 self.textbuffer.get_end_iter())
         #self.textview.set_left_margin(100)
         self.create_buttons()
-        self.connect("key-press-event",self.on_key_press_event)
+        self.connect("key-press-event", self.on_key_press_event)
         self.to_begining()
 
         self.next_mark = False
@@ -77,6 +85,22 @@ class TextViewWindow(Gtk.Window):
         self.next_jump = False
         self.textbuffer.place_cursor(itr)
 
+    def new_win_lookup_results(self, word, type_lookup):
+        con = sql_wrapper.startConnection('dicts.db')
+        if type_lookup == 0:
+            results = sql_wrapper.searchWord(word, con, ['shinmeikai', 'jm'])
+            results = list(map(sql_wrapper.toString, results))
+            if len(results) == 0:
+                return
+            new = ''
+            for word in results:
+                new += word + "---------------------------------\n"
+        elif type_lookup == 1:
+            results = sql_wrapper.regexSearch(word, con)
+            new = '\n'.join(results)
+
+        win = TextViewWindow(self.title + '_0', new)
+        win.show_all()
 
     def on_key_press_event(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
@@ -131,7 +155,7 @@ class TextViewWindow(Gtk.Window):
             # in later of the ladder I will switch.
             cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
             loc = self.textview.get_cursor_locations()[0]
-            new_cur = self.textview.get_iter_at_location(loc.x, loc.y + loc.height*1.1)[1]
+            new_cur = self.textview.get_iter_at_location(loc.x, loc.y + loc.height*1.3)[1]
             self.textbuffer.place_cursor(new_cur)
         elif key_name == 'k':
             # TODO: see above. Also this doesn't totally work for paragraphs
@@ -178,18 +202,7 @@ class TextViewWindow(Gtk.Window):
             cur_cur2 = cur_cur.copy()
             cur_cur2.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)[:-1]
-            con = sql_wrapper.startConnection('dicts.db')
-            results = sql_wrapper.searchWord(cur_text, con, ['shinmeikai', 'jm'])
-            results = list(map(sql_wrapper.toString, results))
-            if len(results) == 0:
-                return
-            new = ''
-            for word in results:
-                new += word + "---------------------------------\n"
-            win = TextViewWindow(self.title + '_0', new)
-            win.show_all()
-
-
+            self.new_win_lookup_results(cur_text, 0)
         elif key_name == 'g':
             self.textbuffer.place_cursor(self.textbuffer.get_iter_at_offset(0))
         elif key_name == 'G':
@@ -206,6 +219,21 @@ class TextViewWindow(Gtk.Window):
                     font_desc=Pango.FontDescription.from_string(str(self.size)))
             self.textbuffer.apply_tag(tag, self.textbuffer.get_start_iter(),
                     self.textbuffer.get_end_iter())
+        elif key_name == 's':
+            search = SearchDialog(self, 0)
+            response = search.run()
+            if response < 0:
+                return
+            self.new_win_lookup_results(search.entry.get_text(), response)
+            search.hide()
+        elif key_name == 'r':
+            search = SearchDialog(self, 1)
+            response = search.run()
+            if response < 0:
+                return
+            self.new_win_lookup_results(search.entry.get_text(), response)
+            search.hide()
+
         print(key_name)
 
 
@@ -243,17 +271,6 @@ class TextViewWindow(Gtk.Window):
             check_cursor, check_editable, Gtk.PositionType.RIGHT, 1, 1
         )
 
-
-    def on_button_clicked(self, widget, tag):
-        bounds = self.textbuffer.get_selection_bounds()
-        if len(bounds) != 0:
-            start, end = bounds
-            self.textbuffer.apply_tag(tag, start, end)
-
-    def on_clear_clicked(self, widget):
-        start = self.textbuffer.get_start_iter()
-        end = self.textbuffer.get_end_iter()
-        self.textbuffer.remove_all_tags(start, end)
 
     def on_editable_toggled(self, widget):
         self.textview.set_editable(widget.get_active())
