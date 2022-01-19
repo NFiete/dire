@@ -190,6 +190,8 @@ class TextViewWindow(Gtk.Window):
             con = sql_wrapper.startConnection('dicts.db')
             words = japanese.start_lookup(cur_text[0:min(len(cur_text), 20)],
                     con)
+            if len(words) == 0:
+                return
             hits = []
             for word in words:
                 hits.append(sql_wrapper.searchWord(word, con, ['shinmeikai', 'jm']))
