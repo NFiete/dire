@@ -80,13 +80,15 @@ class TextViewWindow(Gtk.Window):
     def new_win_lookup_results(self, word, type_lookup):
         con = sql_wrapper.startConnection('dicts.db')
         if type_lookup == 0:
-            results = sql_wrapper.searchWord(word, con, ['shinmeikai', 'jm'])
-            results = list(map(sql_wrapper.toString, results))
-            if len(results) == 0:
+            con = sql_wrapper.startConnection('dicts.db')
+            words = japanese.start_lookup(word[0:min(len(word), 20)],
+                    con)
+            if len(words) == 0:
                 return
-            new = ''
-            for word in results:
-                new += word + "---------------------------------\n"
+            hits = []
+            for wrd in words:
+                hits.append(sql_wrapper.searchWord(wrd, con, ['shinmeikai', 'jm']))
+            new = sql_wrapper.all_hits_to_string(hits)
         elif type_lookup == 1:
             results = sql_wrapper.regexSearch(word, con)
             new = '\n'.join(results)
@@ -179,17 +181,7 @@ class TextViewWindow(Gtk.Window):
             cur_cur2 = cur_cur.copy()
             cur_cur2.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)
-            con = sql_wrapper.startConnection('dicts.db')
-            words = japanese.start_lookup(cur_text[0:min(len(cur_text), 20)],
-                    con)
-            if len(words) == 0:
-                return
-            hits = []
-            for word in words:
-                hits.append(sql_wrapper.searchWord(word, con, ['shinmeikai', 'jm']))
-            new_text = sql_wrapper.all_hits_to_string(hits)
-            win = TextViewWindow(self.title + '_0', new_text)
-            win.show_all()
+            self.new_win_lookup_results(cur_text, 0)
         elif key_name == 'e':
             buf = self.textbuffer
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
