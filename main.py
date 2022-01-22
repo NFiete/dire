@@ -49,7 +49,6 @@ def get_message(conn):
 
 def recvall(sock):
     fragments = []
-    data = b''
     while True:
         part = sock.recv(1024)
         if not part:
@@ -75,4 +74,3 @@ x.daemon = True
 x.start()
 win.show_all()
 Gtk.main()
-
