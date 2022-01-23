@@ -74,3 +74,5 @@ x.daemon = True
 x.start()
 win.show_all()
 Gtk.main()
+os.remove(name)
+exit(0)
