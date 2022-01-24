@@ -14,9 +14,9 @@ function print_subs()
 	run_cmd('dire_send_text video', subs)
 end
 
-function file_exists(name)
-   local f=io.open(name,"r")
-   if f~=nil then io.close(f) return true else return false end
+
+function start_watch()
+	mp.observe_property("sub-text", "string", print_subs)
 end
 
-mp.observe_property("sub-text", "string", print_subs)
+mp.add_key_binding('d', start_watch)
