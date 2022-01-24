@@ -24,10 +24,10 @@ args = parser.parse_args()
 file_name = args.file
 if args.name == None:
     title = str(time.time())
-    name = os.path.expanduser('~') + '/.config/tjna/' + title
+    name = os.path.expanduser('~') + '/.config/dire/sockets/' + title
 else:
     title = args.name
-    name = os.path.expanduser('~') + '/.config/tjna/' + args.name
+    name = os.path.expanduser('~') + '/.config/dire/sockets/' + args.name
 
 if os.path.exists(name):
     print('already exists esiting')
