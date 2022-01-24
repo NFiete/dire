@@ -1,0 +1,10 @@
+#!/usr/bin/python
+
+import socket, sys, os
+if len(sys.argv) < 3:
+    print("USAGE: dire_send_text <NAME> '<MESSAGE>'")
+    exit(1)
+home = os.path.expanduser('~')
+s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+s.connect(home + '/.config/dire/sockets/' + sys.argv[1])
+s.sendall(bytes(sys.argv[2], 'utf-8'))
