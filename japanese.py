@@ -1,11 +1,6 @@
 import sql_wrapper #SQL functions to search database
-import pdb
-#import sql_wrapper #SQL functions to search database
 
-import subprocess #To use kakasi to convert to kana
-import json #To handle opening the deconjugation list may remove
 import re #To check if a word ends with a given string. May remove
-import concurrent.futures # To execute searches in parallel
 
 
 '''
@@ -37,26 +32,10 @@ def deconjugate_word(word, col, db):
 
     return result
 
+
 '''
-# Go through all possible conjugations and try to de conjugate Only include
-# results which are words in col of db
-def deconjugate_word(word, db):
-    possibilites = deconjugate_possiblities(word, db)
-    result = filter(lambda x: sql_wrapper.exists_word(x, db), possibilites)
-    return list(result)
+Searches for words at the start of the sentence returns the entries
 '''
-
-
-#WIP
-def parallel_starts_with_search(sentance, col, db, deconjugate_json):
-    executrer = concurrent.futures.ProcessPoolExecutor()
-    subsentances = map(lambda x: sentance[0:x+1], range(len(sentance)))
-    ex_fun = lambda x: deconjugate_word(x, col, db, deconjugate_json)
-    possiblities = list(executrer.map(ex_fun, subsentances))
-    return possiblities
-
-
-
 def starts_with_search(sentance, col, db, deconjugate_json):
     results = []
     i = len(sentance)
@@ -126,7 +105,11 @@ def has_kanji(sentance):
 
 # Returns true if the sentance has kanatana it it false otherwise
 def has_katakana(sentance):
-    katakana = [ 'ア', 'カ', 'サ', 'タ', 'ナ', 'ハ', 'マ', 'ヤ', 'ラ', 'ワ', 'イ', 'キ', 'シ', 'チ', 'ニ', 'ヒ', 'ミ', 'リ', 'ヰ', 'ウ', 'ク', 'ス', 'ツ', 'ヌ', 'フ', 'ム', 'ユ', 'ル', 'エ', 'ケ', 'セ', 'テ', 'ネ', 'ヘ', 'メ', 'レ', 'ヱ', 'オ', 'コ', 'ソ', 'ト', 'ノ', 'ホ', 'モ', 'ヨ', 'ロ', 'ヲ', 'ン', 'ャ', 'ュ', 'ョ' ]
+    katakana = [ 'ア', 'カ', 'サ', 'タ', 'ナ', 'ハ', 'マ', 'ヤ', 'ラ', 'ワ',
+            'イ', 'キ', 'シ', 'チ', 'ニ', 'ヒ', 'ミ', 'リ', 'ヰ', 'ウ', 'ク',
+            'ス', 'ツ', 'ヌ', 'フ', 'ム', 'ユ', 'ル', 'エ', 'ケ', 'セ', 'テ',
+            'ネ', 'ヘ', 'メ', 'レ', 'ヱ', 'オ', 'コ', 'ソ', 'ト', 'ノ', 'ホ',
+            'モ', 'ヨ', 'ロ', 'ヲ', 'ン', 'ャ', 'ュ', 'ョ', 'ッ' ]
     for char in sentance:
         if char in katakana:
             return True
@@ -197,8 +180,6 @@ def start_lookup(sentance, db):
     if len(results) != 0:
         return results
     possible_pronc = to_hiragana_possible(sentance, db)
-
-    print('going to long lookup on: ' + sentance)
 
     for pronc in possible_pronc:
         results += sentance_search(pronc, 'pronunciation', db)
