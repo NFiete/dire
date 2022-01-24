@@ -4,10 +4,21 @@ import re
 
 
 class Entry:
-    def __init__(self, word, kana, meanings):
+    def __init__(self, word, pronunciaton, meanings, dictonary):
         self.word = word
-        self.kana = kana
-        self.meaings = meanings
+        self.pronunciation = pronunciaton
+        self.meaings = json.loads(meanings)
+        self.dictionary = dictonary
+    def __str__(self):
+        out_str = [self.dictionary, self.word, self.pronunciation] + self.meaings
+        return "\n".join(out_str)
+    def __eq__(self, other):
+        return self.word == other.word and \
+                self.pronunciation == other.pronunciation and \
+                self.meaings == other.meaings
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 
 
 def displayHits(hits):
@@ -51,19 +62,41 @@ def displayWords(wordList):
     for word in wordList:
         print(word[0])
 
+def get_conjugations(db):
+    return list(db.execute('SELECT * from conjugation'))
 
-def searchWordDict(word, dct, db):
-    qry = "SELECT word,kana,defn FROM "+dct+" WHERE word='"+word+"'"
-    return(db.execute(qry).fetchall())
+def search_glyph(glyph, db):
+    qry = f'SELECT pronunciations FROM glyphs WHERE glyph = "{glyph}"'
+    results = list(db.execute(qry))
+    if len(results) > 0:
+        return json.loads(results[0][0])
+    return []
 
 
-def searchWord(word, db, allDicts):
-    hits = []
-    for dct in allDicts:
-        qryResult = searchWordDict(word, dct, db)
-        if(len(qryResult) > 0):
-            hits.append([qryResult, dct])
-    return hits
+'''Searches word from db returning a list of hits. If allDicts is None will
+search all dictonaries, otherwise limit to allDicts'''
+def searchWord(word, db, col = 'word', allDicts = None):
+    if allDicts == None:
+        qry = f'SELECT * FROM dicts where {col}="{word}"'
+    else:
+        for i in range(len(allDicts)):
+            allDicts[i] = '"' + allDicts[i] + '"'
+        in_str = '(' + ','.join(allDicts) + ')'
+        #TODO: Also search the word
+        qry = f'SELECT * FROM dicts where dict IN "{in_str}"'
+
+    results = list(db.execute(qry).fetchall())
+    return list(map(lambda x: Entry(x[1], x[2], x[3], x[4]), results))
+
+def search_pronunciation(pronunciation, db):
+    qry = f'SELECT * FROM dicts WHERE pronunciation="{pronunciation}"'
+    results = list(db.execute(qry).fetchall())
+    return list(map(lambda x: Entry(x[1], x[2], x[3], x[4]), results))
+
+i = 0
+def pronunciation_exists(pronunciation, db):
+    qry = f'SELECT pronc FROM proncs WHERE pronc="{pronunciation}" LIMIT 1'
+    return len(list(db.execute(qry).fetchall())) > 0
 
 
 def regexSearch(regex, db):
@@ -82,4 +115,7 @@ def startConnection(dbName):
     cur = con.cursor()
     return(cur)
 
+def exists_start(word, col, db):
+    qry = f'SELECT {col} FROM dicts WHERE {col} LIKE "{word}%" LIMIT 1'
+    return len(list(db.execute(qry).fetchall())) > 0
 
