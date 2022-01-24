@@ -10,16 +10,18 @@ adding yomichan dictionaries..
 First gather all of the yomichan dictionaries you want to add into a directory.
 Make sure you unzip them and orginize them into folders. So your directory
 sturcture should look something like this:
-
-add_yomichan_dict.py
-dicts/
-    my_first_dict/
-        term_bank_1.json
-        term_bank_2.json
-        ...
-    my_second_dict/
-        term_bank_1.json
-        ...
+.
+├── add_yomichan_dict.py
+├── dicts
+│   ├── my_dict_1
+│   │   ├── term_bank_10.json
+│   │   ├── term_bank_11.json
+│   │   ├── term_bank_12.json
+│   │   ├── ...
+│   ├── my_dict_2
+│   │   ├── term_bank_10.json
+│   │   ├── term_bank_11.json
+│   │   ├── term_bank_12.json
 
 The names of the folders (in this case my_first_dict) are how they will be
 stored in the program so choose the names carefully.
@@ -37,84 +39,21 @@ if len(sys.argv) < 2:
 
 # Converts all katakana to hiragana
 def katakana_to_hiragana(word):
-    kana_dict= { 'ア': 'あ',
-            'カ': 'か',
-            'サ': 'さ',
-            'タ': 'た',
-            'ナ': 'な',
-            'ハ': 'は',
-            'マ': 'ま',
-            'ヤ': 'や',
-            'ラ': 'ら',
-            'ワ': 'わ',
-            'イ': 'い',
-            'キ': 'き',
-            'シ': 'し',
-            'チ': 'ち',
-            'ニ': 'に',
-            'ヒ': 'ひ',
-            'ミ': 'み',
-            'リ': 'り',
-            'ヰ': 'ゐ',
-            'ウ': 'う',
-            'ク': 'く',
-            'ス': 'す',
-            'ツ': 'つ',
-            'ヌ': 'ぬ',
-            'フ': 'ふ',
-            'ム': 'む',
-            'ユ': 'ゆ',
-            'ル': 'る',
-            'エ': 'え',
-            'ケ': 'け',
-            'セ': 'せ',
-            'テ': 'て',
-            'ネ': 'ね',
-            'ヘ': 'へ',
-            'メ': 'め',
-            'レ': 'れ',
-            'ヱ': 'ゑ',
-            'オ': 'お',
-            'コ': 'こ',
-            'ソ': 'そ',
-            'ト': 'と',
-            'ノ': 'の',
-            'ホ': 'ほ',
-            'モ': 'も',
-            'ヨ': 'よ',
-            'ロ': 'ろ',
-            'ヲ': 'を',
-            'ン': 'ん',
-            'ャ': 'ゃ',
-            'ュ': 'ゅ',
-            'ョ': 'ょ',
-            'ガ': 'が',
-            'ギ': 'ぎ',
-            'グ': 'ぐ',
-            'ゲ': 'げ',
-            'ゴ': 'ご',
-            'ザ': 'ざ',
-            'ジ': 'じ',
-            'ズ': 'ず',
-            'ゼ': 'ぜ',
-            'ゾ': 'ぞ',
-            'ダ': 'だ',
-            'ヂ': 'ぢ',
-            'ヅ': 'づ',
-            'デ': 'で',
-            'ド': 'ど',
-            'バ': 'ば',
-            'ビ': 'び',
-            'ブ': 'ぶ',
-            'ベ': 'べ',
-            'ボ': 'ぼ',
-            'パ': 'ぱ',
-            'ピ': 'ぴ',
-            'プ': 'ぷ',
-            'ペ': 'ぺ',
-            'ポ': 'ぽ',
-            'ー': 'ー'
-    }
+    kana_dict= { 'ア': 'あ', 'カ': 'か', 'サ': 'さ', 'タ': 'た', 'ナ': 'な',
+            'ハ': 'は', 'マ': 'ま', 'ヤ': 'や', 'ラ': 'ら', 'ワ': 'わ', 'イ':
+            'い', 'キ': 'き', 'シ': 'し', 'チ': 'ち', 'ニ': 'に', 'ヒ': 'ひ',
+            'ミ': 'み', 'リ': 'り', 'ヰ': 'ゐ', 'ウ': 'う', 'ク': 'く', 'ス':
+            'す', 'ツ': 'つ', 'ヌ': 'ぬ', 'フ': 'ふ', 'ム': 'む', 'ユ': 'ゆ',
+            'ル': 'る', 'エ': 'え', 'ケ': 'け', 'セ': 'せ', 'テ': 'て', 'ネ':
+            'ね', 'ヘ': 'へ', 'メ': 'め', 'レ': 'れ', 'ヱ': 'ゑ', 'オ': 'お',
+            'コ': 'こ', 'ソ': 'そ', 'ト': 'と', 'ノ': 'の', 'ホ': 'ほ', 'モ':
+            'も', 'ヨ': 'よ', 'ロ': 'ろ', 'ヲ': 'を', 'ン': 'ん', 'ャ': 'ゃ',
+            'ュ': 'ゅ', 'ョ': 'ょ', 'ガ': 'が', 'ギ': 'ぎ', 'グ': 'ぐ', 'ゲ':
+            'げ', 'ゴ': 'ご', 'ザ': 'ざ', 'ジ': 'じ', 'ズ': 'ず', 'ゼ': 'ぜ',
+            'ゾ': 'ぞ', 'ダ': 'だ', 'ヂ': 'ぢ', 'ヅ': 'づ', 'デ': 'で', 'ド':
+            'ど', 'バ': 'ば', 'ビ': 'び', 'ブ': 'ぶ', 'ベ': 'べ', 'ボ': 'ぼ',
+            'パ': 'ぱ', 'ピ': 'ぴ', 'プ': 'ぷ', 'ペ': 'ぺ', 'ポ': 'ぽ', 'ー':
+            'ー', "ッ": "っ"}
     result = ""
     for char in word:
         if char in kana_dict:
@@ -139,9 +78,10 @@ def init_db(name):
     cur = con.cursor()
 
 
-    cur.execute('''CREATE TABLE dicts (word, pronunciation, definition, dict)''')
+    cur.execute('''CREATE TABLE dicts (id integer primary key autoincrement, word, pronunciation, definition, dict)''')
     cur.execute('''CREATE TABLE glyphs (glyph, pronunciations)''')
     cur.execute('''CREATE TABLE words (word)''')
+    cur.execute('''CREATE TABLE proncs (pronc, id)''')
     cur.execute('''CREATE TABLE conjugation (conjugation, deconjugation)''')
 
 
@@ -175,12 +115,12 @@ def add_one_dict(base_name, dict_name, cur):
         for entry in data:
             # This is just how they are structured there is other information but I
             # don't use it
-            word = entry[0].replace("'", "\"")
-            pronunciation=entry[1].replace("'", "\"")
+            word = entry[0].replace("'", "''")
+            pronunciation=entry[1].replace("'", "''")
             if has_katakana(pronunciation):
                 pronunciation = katakana_to_hiragana(pronunciation)
-            definition = str(entry[5]).replace("'", "\"")
-            qry = f'INSERT INTO dicts VALUES (\'{word}\', \'{pronunciation}\', \'{definition}\', \'{dict_name}\');'
+            definition = json.dumps(entry[5]).replace("'", "''")
+            qry = f'INSERT INTO dicts (word, pronunciation, definition, dict) VALUES (\'{word}\', \'{pronunciation}\', \'{definition}\', \'{dict_name}\');'
             cur.execute(qry)
 
 
@@ -201,24 +141,10 @@ files = os.listdir(dict_name)
 for file in files:
     add_one_dict(dict_name, file, cur)
 
-index_name = dict_name + '_idx'
-pron_index_name = f'pron_{dict_name}_idx'
-try:
-    cur.execute(f'CREATE INDEX {index_name} ON dicts (word)')
-#    cur.execute(f'DROP INDEX {index_name};')
-except:
-    print('creating index')
-try:
-    cur.execute(f'CREATE INDEX {pron_index_name} ON dicts (pronunciation)')
-#    cur.execute(f'DROP INDEX {pron_index_name};')
-except:
-    print('creating index')
+cur.execute('CREATE INDEX IF NOT EXISTS dict_word_index ON dicts (word)')
+cur.execute('CREATE INDEX IF NOT EXISTS dict_pron_index ON dicts (pronunciation)')
 
 cur.execute('INSERT INTO words SELECT word FROM dicts WHERE NOT EXISTS (SELECT word FROM words) GROUP BY word;')
-try:
-    cur.execute('CREATE INDEX word_idx ON words (word)')
-#    cur.execute('DROP INDEX word_idx;')
-except:
-    print('updating word list')
+cur.execute('CREATE INDEX IF NOT EXISTS word_idx ON words (word)')
 con.commit()
 con.close()

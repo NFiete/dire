@@ -141,13 +141,13 @@ def add_one_dict(base_name, dict_name, cur):
             exists_dict = cur.execute(f'SELECT glyph FROM glyphs WHERE glyph="{glyph}";')
             if len(exists_dict.fetchall()) > 0:
                 qry = f'SELECT pronunciations FROM glyphs WHERE glyph="{glyph}";'
-                cur_result = list(cur.execute(qry).fetchall())
+                cur_result = json.loads(list(cur.execute(qry).fetchall())[0][0])
                 merge(readings, cur_result)
-                readings = str(readings).replace("'", "\"")
+                readings = json.dumps(readings).replace("'", "''")
                 qry = f'UPDATE glyphs SET pronunciations = \'{readings}\' WHERE glyph="{glyph}";'
                 cur.execute(qry)
             else:
-                readings = str(readings).replace("'", "\"")
+                readings = json.dumps(readings).replace("'", "''")
                 qry = f'INSERT INTO glyphs VALUES (\'{glyph}\', \'{readings}\');'
                 cur.execute(qry)
 
@@ -170,9 +170,6 @@ files = os.listdir(dict_name)
 for file in files:
     add_one_dict(dict_name, file, cur)
 
-try:
-    cur.execute('CREATE INDEX glyph_idx ON glyphs (glyph)')
-except:
-    print('index exists')
+cur.execute('CREATE UNIQUE INDEX IF NOT EXISTS glyph_idx ON glyphs (glyph)')
 con.commit()
 con.close()

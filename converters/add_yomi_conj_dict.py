@@ -44,10 +44,7 @@ cur = con.cursor()
 
 dict_name = sys.argv[1]
 add_file(dict_name, cur)
-try:
-    cur.execute('CREATE INDEX conjugation_idx ON conjugation (conjugation)')
-except:
-    print('index exists')
+cur.execute('CREATE INDEX IF NOT EXISTS conjugation_idx ON conjugation (conjugation)')
 
 con.commit()
 con.close()
