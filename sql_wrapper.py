@@ -1,6 +1,7 @@
 import sqlite3
 import json
 import re
+import os
 
 
 class Entry:
@@ -109,8 +110,9 @@ def exists_word(word, db):
     return len(db.execute(qry).fetchall()) > 0
 
 
-def startConnection(dbName):
-    con = sqlite3.connect(dbName)
+def startConnection():
+    home = os.path.expanduser('~')
+    con = sqlite3.connect(home + '/.local/share/dire/dire.db')
     con.create_function('regexp', 2, lambda x, y: 1 if re.search(x, y) else 0)
     cur = con.cursor()
     return(cur)
