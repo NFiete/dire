@@ -1,4 +1,6 @@
 import sql_wrapper #SQL functions to search database
+import pdb
+#import sql_wrapper #SQL functions to search database
 
 import subprocess #To use kakasi to convert to kana
 import json #To handle opening the deconjugation list may remove
@@ -15,50 +17,34 @@ It works by:
 '''
 
 # Return all possible deconjugations do not check if actually a word
-def deconjugate_possiblities(word, col, db, deconjugation_list):
-    deinflect_json = json.loads(open(deconjugation_list, "r").read())
-    forms = list(deinflect_json)
+def deconjugate_word(word, col, db):
+    conjugations = sql_wrapper.get_conjugations(db)
     seen = [word]
     possibilities = [word]
+    result = []
     while len(possibilities) > 0:
         cur_word = possibilities.pop()
-        for form in forms:
-            for inflection in deinflect_json[form]:
-                if cur_word.endswith(inflection['kanaIn']):
-                    new_word = re.sub(inflection['kanaIn'] + '$',
-                            inflection['kanaOut'],
-                            cur_word)
-                    if new_word not in seen:
-                        possibilities.append(new_word)
-                        seen.append(new_word)
+        for inflection in conjugations:
+            if cur_word.endswith(inflection[0]):
+                new_word = re.sub(inflection[0] + '$',
+                        inflection[1],
+                        cur_word)
+                if new_word not in seen:
+                    possibilities.append(new_word)
+                    seen.append(new_word)
+                lookup = sql_wrapper.searchWord(new_word, db, col=col)
+                result += lookup
 
-    return possibilities
+    return result
 
-
+'''
 # Go through all possible conjugations and try to de conjugate Only include
 # results which are words in col of db
-def deconjugate_word(word, col, db, deconjugation_list):
-    deinflect_json = json.loads(open(deconjugation_list, "r").read())
-    forms = list(deinflect_json)
-    seen = [word]
-    possibilities = [word]
-    results = []
-    while len(possibilities) > 0:
-        cur_word = possibilities.pop()
-        for form in forms:
-            for inflection in deinflect_json[form]:
-                if cur_word.endswith(inflection['kanaIn']):
-                    new_word = re.sub(inflection['kanaIn'] + '$',
-                            inflection['kanaOut'],
-                            cur_word)
-                    if new_word not in seen:
-                        possibilities.append(new_word)
-                        seen.append(new_word)
-                    if sql_wrapper.exists_word(new_word, db):
-                        results.append(new_word)
-
-    return results
-
+def deconjugate_word(word, db):
+    possibilites = deconjugate_possiblities(word, db)
+    result = filter(lambda x: sql_wrapper.exists_word(x, db), possibilites)
+    return list(result)
+'''
 
 
 #WIP
@@ -88,63 +74,30 @@ def starts_with_search(sentance, col, db, deconjugate_json):
 
     return results
 
+
 # Converts all katakana to hiragana
 def katakana_to_hiragana(word):
-    kana_dict= { 'ア': 'あ',
-            'カ': 'か',
-            'サ': 'さ',
-            'タ': 'た',
-            'ナ': 'な',
-            'ハ': 'は',
-            'マ': 'ま',
-            'ヤ': 'や',
-            'ラ': 'ら',
-            'ワ': 'わ',
-            'イ': 'い',
-            'キ': 'き',
-            'シ': 'し',
-            'チ': 'ち',
-            'ニ': 'に',
-            'ヒ': 'ひ',
-            'ミ': 'み',
-            'リ': 'り',
-            'ヰ': 'ゐ',
-            'ウ': 'う',
-            'ク': 'く',
-            'ス': 'す',
-            'ツ': 'つ',
-            'ヌ': 'ぬ',
-            'フ': 'ふ',
-            'ム': 'む',
-            'ユ': 'ゆ',
-            'ル': 'る',
-            'エ': 'え',
-            'ケ': 'け',
-            'セ': 'せ',
-            'テ': 'て',
-            'ネ': 'ね',
-            'ヘ': 'へ',
-            'メ': 'め',
-            'レ': 'れ',
-            'ヱ': 'ゑ',
-            'オ': 'お',
-            'コ': 'こ',
-            'ソ': 'そ',
-            'ト': 'と',
-            'ノ': 'の',
-            'ホ': 'ほ',
-            'モ': 'も',
-            'ヨ': 'よ',
-            'ロ': 'ろ',
-            'ヲ': 'を',
-            'ン': 'ん',
-            'ャ': 'ゃ',
-            'ュ': 'ゅ',
-            'ョ': 'ょ'
-    }
+    kana_dict= { 'ア': 'あ', 'カ': 'か', 'サ': 'さ', 'タ': 'た', 'ナ': 'な',
+            'ハ': 'は', 'マ': 'ま', 'ヤ': 'や', 'ラ': 'ら', 'ワ': 'わ', 'イ':
+            'い', 'キ': 'き', 'シ': 'し', 'チ': 'ち', 'ニ': 'に', 'ヒ': 'ひ',
+            'ミ': 'み', 'リ': 'り', 'ヰ': 'ゐ', 'ウ': 'う', 'ク': 'く', 'ス':
+            'す', 'ツ': 'つ', 'ヌ': 'ぬ', 'フ': 'ふ', 'ム': 'む', 'ユ': 'ゆ',
+            'ル': 'る', 'エ': 'え', 'ケ': 'け', 'セ': 'せ', 'テ': 'て', 'ネ':
+            'ね', 'ヘ': 'へ', 'メ': 'め', 'レ': 'れ', 'ヱ': 'ゑ', 'オ': 'お',
+            'コ': 'こ', 'ソ': 'そ', 'ト': 'と', 'ノ': 'の', 'ホ': 'ほ', 'モ':
+            'も', 'ヨ': 'よ', 'ロ': 'ろ', 'ヲ': 'を', 'ン': 'ん', 'ャ': 'ゃ',
+            'ュ': 'ゅ', 'ョ': 'ょ', 'ガ': 'が', 'ギ': 'ぎ', 'グ': 'ぐ', 'ゲ':
+            'げ', 'ゴ': 'ご', 'ザ': 'ざ', 'ジ': 'じ', 'ズ': 'ず', 'ゼ': 'ぜ',
+            'ゾ': 'ぞ', 'ダ': 'だ', 'ヂ': 'ぢ', 'ヅ': 'づ', 'デ': 'で', 'ド':
+            'ど', 'バ': 'ば', 'ビ': 'び', 'ブ': 'ぶ', 'ベ': 'べ', 'ボ': 'ぼ',
+            'パ': 'ぱ', 'ピ': 'ぴ', 'プ': 'ぷ', 'ペ': 'ぺ', 'ポ': 'ぽ', 'ー':
+            'ー', "ッ": "っ"}
     result = ""
     for char in word:
-        result += kana_dict[char]
+        if char in kana_dict:
+            result += kana_dict[char]
+        else:
+            result += char
 
     return result
 
@@ -179,8 +132,75 @@ def has_katakana(sentance):
             return True
     return False
 
+'''
+Work in progress get all possible hiragana for a sentence
+'''
+def to_hiragana_possible(word, db):
+    word = katakana_to_hiragana(word)
+    pronc_possible = []
+    for glyph in word:
+        pronc_possible.append(sql_wrapper.search_glyph(glyph, db))
+    possible = ['']
+    result_possible = []
+    for pronc_glyph,i in zip(pronc_possible, range(len(pronc_possible))):
+        if len(pronc_glyph) == 0:
+            pronc_glyph = [word[i]]
+        og_possibilities = possible
+        possible = []
+        no_new = True
+        for pronc in pronc_glyph:
+            for start_possible in og_possibilities:
+                contender = start_possible + pronc
+                if sql_wrapper.exists_start(contender, 'pronunciation', db):
+                    possible.append(contender)
+                    no_new = False
+        if no_new:
+            result_possible = list(map(lambda x: x + word[i::],
+                og_possibilities))
+            print(result_possible)
+            return result_possible
+    return result_possible
 
 
-def start_lookup(word, db):
-    return starts_with_search(word, 'word', db, 'deinflect.json')
+def start_kana(word):
+    i = 0
+    while i < len(word) and not has_kanji(word[i]):
+        i+=1
+    return word[0:i]
+
+
+def sentance_search(sentance, col, db):
+    results = []
+    i = len(sentance)
+    while i > 0 and len(results) < 10:
+        substring = sentance[0:i]
+        lookup = sql_wrapper.searchWord(substring, db, col=col)
+        if len(lookup) > 0:
+            results += lookup
+            i-=1
+            continue
+        possible_words = deconjugate_word(substring, col, db)
+        for word in possible_words:
+            if word not in results:
+                results.append(word)
+        i-=1
+    return results
+
+
+def start_lookup(sentance, db):
+    results = sentance_search(sentance, 'word', db)
+    sentance_kana_start = katakana_to_hiragana(start_kana(sentance))
+    pronc_results =  sentance_search(sentance_kana_start, 'pronunciation', db)
+    for pronc in pronc_results:
+        if pronc not in results:
+            results.append(pronc)
+    if len(results) != 0:
+        return results
+    possible_pronc = to_hiragana_possible(sentance, db)
+
+    print('going to long lookup on: ' + sentance)
+
+    for pronc in possible_pronc:
+        results += sentance_search(pronc, 'pronunciation', db)
+    return results
 
