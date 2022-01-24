@@ -27,10 +27,9 @@ class TextViewWindow(Gtk.Window):
                 font_desc=Pango.FontDescription.from_string(str(self.size)))
         self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
                 self.textbuffer.get_end_iter())
-        #self.textview.set_left_margin(100)
-        self.create_buttons()
         self.connect("key-press-event", self.on_key_press_event)
         self.to_begining()
+        self.con = sql_wrapper.startConnection()
 
         self.next_mark = False
         self.next_jump = False
@@ -78,18 +77,14 @@ class TextViewWindow(Gtk.Window):
         self.textbuffer.place_cursor(itr)
 
     def new_win_lookup_results(self, word, type_lookup):
-        con = sql_wrapper.startConnection('/home/nick/.local/share/dire/dire.db')
         if type_lookup == 0:
-            con = sql_wrapper.startConnection('/home/nick/.local/share/dire/dire.db')
-            print('start')
             words = japanese.start_lookup(word[0:min(len(word), 10)],
-                    con)
-            print('end')
+                    self.con)
             if len(words) == 0:
                 return
             new = "\n".join(map(lambda x: str(x), words))
         elif type_lookup == 1:
-            results = sql_wrapper.regexSearch(word, con)
+            results = sql_wrapper.regexSearch(word, self.con)
             new = '\n'.join(results)
 
         win = TextViewWindow(self.title + '_0', new)
@@ -162,12 +157,14 @@ class TextViewWindow(Gtk.Window):
             cur_cur2 = cur_cur.copy()
             cur_cur2.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)
-            con = sql_wrapper.startConnection('/home/nick/.local/share/dire/dire.db')
             words = japanese.start_lookup(cur_text[0:min(len(cur_text), 20)],
-                    con)
+                    self.con)
             new = ''
+            seen = []
             for word in words:
-                new += word + "\n"
+                if word.word not in seen:
+                    new += word.word + "\n"
+                    seen.append(word.word)
             win = TextViewWindow(self.title + '_0', new)
             win.show_all()
         elif key_name == 'm':
@@ -241,24 +238,5 @@ class TextViewWindow(Gtk.Window):
         self.textview.set_wrap_mode(Gtk.WrapMode.CHAR)
 
 
-    def create_buttons(self):
-        check_editable = Gtk.CheckButton(label="Editable")
-        check_editable.set_active(False)
-        check_editable.connect("toggled", self.on_editable_toggled)
-        self.grid.attach(check_editable, 0, 2, 1, 1)
-
-        check_cursor = Gtk.CheckButton(label="Cursor Visible")
-        check_cursor.set_active(True)
-        #check_editable.connect("toggled", self.on_cursor_toggled)
-        self.grid.attach_next_to(
-            check_cursor, check_editable, Gtk.PositionType.RIGHT, 1, 1
-        )
-
-
-    def on_editable_toggled(self, widget):
-        self.textview.set_editable(widget.get_active())
-
-    def on_cursor_toggled(self, widget):
-        self.textview.set_cursor_visible(widget.get_active())
 
 
