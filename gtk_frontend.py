@@ -84,7 +84,7 @@ class TextViewWindow(Gtk.Window):
                 return
             new = "\n".join(map(lambda x: str(x), words))
         elif type_lookup == 1:
-            results = sql_wrapper.regexSearch(word, self.con)
+            results = sql_wrapper.like_search(word, self.con)
             new = '\n'.join(results)
 
         win = TextViewWindow(self.title + '_0', new)

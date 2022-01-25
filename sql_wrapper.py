@@ -100,9 +100,8 @@ def pronunciation_exists(pronunciation, db):
     return len(list(db.execute(qry).fetchall())) > 0
 
 
-def regexSearch(regex, db):
-    regex = '^' + regex + '$'
-    qry = "SELECT word FROM words WHERE word REGEXP '" + regex + "'"
+def like_search(like_phrase, db):
+    qry = "SELECT word FROM words WHERE word LIKE '" + like_phrase + "'"
     return(list(map(lambda x: x[0], db.execute(qry).fetchall())))
 
 def exists_word(word, db):
