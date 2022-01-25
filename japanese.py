@@ -1,6 +1,17 @@
 import sql_wrapper #SQL functions to search database
+import sys, os # To load config
+if os.path.exists(os.path.expanduser('~') + '/.config/dire/config.py'):
+    sys.path.append(os.path.expanduser('~') + '/.config/dire/')
+elif os.path.exists('/usr/share/dire/config.py'):
+    sys.path.append('/usr/share/dire/')
+else:
+    print("Critical file missing config.py exiting...")
+    exit(1)
+
 
 import re #To check if a word ends with a given string. May remove
+import config
+
 
 
 '''
@@ -10,6 +21,34 @@ the sentance could start with.
 It works by:
     TODO: explain
 '''
+
+
+class Entry_Set():
+    def __init__(self, entries, orig_len):
+        self.entries = entries
+        self.orig_len = orig_len
+        if config.dict_order != None:
+            def key(entry):
+                return config.dict_order[entry.dictionary]
+            entries = sorted(entries, key=key)
+        self.entries = entries
+
+    def __lt__(self, other):
+        return self.orig_len > other.orig_len
+    def __gt__(self, other):
+        return self.orig_len < other.orig_len
+    def __eq__(self, other):
+        return self.entries[0] == other.entries[0]
+    def __le__(self, other):
+        return self.orig_len >= other.orig_len
+    def __ge__(self, other):
+        return self.orig_len <= other.orig_len
+    def __ne__(self, other):
+        return self.entries[0] != other.entries[0]
+    def __str__(self):
+        str_entry = map(str, self.entries)
+        return '\n'.join(str_entry)
+
 
 # Return all possible deconjugations do not check if actually a word
 def deconjugate_word(word, col, db):
@@ -28,7 +67,8 @@ def deconjugate_word(word, col, db):
                     possibilities.append(new_word)
                     seen.append(new_word)
                 lookup = sql_wrapper.searchWord(new_word, db, col=col)
-                result += lookup
+                if len(lookup) > 0:
+                    result.append(Entry_Set(lookup, len(word)))
 
     return result
 
@@ -145,7 +185,7 @@ def sentance_search(sentance, col, db):
         substring = sentance[0:i]
         lookup = sql_wrapper.searchWord(substring, db, col=col)
         if len(lookup) > 0:
-            results += lookup
+            results.append(Entry_Set(lookup, i))
             i-=1
             continue
         possible_words = deconjugate_word(substring, col, db)
@@ -156,20 +196,20 @@ def sentance_search(sentance, col, db):
     return results
 
 
+
+#TODO: Have some sorting for length
 def start_lookup(sentance, db):
     results = sentance_search(sentance, 'word', db)
     sentance_kana_start = katakana_to_hiragana(start_kana(sentance))
-    print(sentance_kana_start)
-    pronc_results =  sentance_search(sentance_kana_start, 'pronunciation', db)
-    print(pronc_results)
+    pronc_results = sentance_search(sentance_kana_start, 'pronunciation', db)
     for pronc in pronc_results:
         if pronc not in results:
             results.append(pronc)
     if len(results) != 0:
-        return results
+        return sorted(results)
     possible_pronc = to_hiragana_possible(sentance, db)
 
     for pronc in possible_pronc:
         results += sentance_search(pronc, 'pronunciation', db)
-    return results
+    return sorted(results)
 
