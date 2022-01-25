@@ -101,7 +101,7 @@ def pronunciation_exists(pronunciation, db):
 
 
 def like_search(like_phrase, db):
-    qry = "SELECT word FROM words WHERE word LIKE '" + like_phrase + "'"
+    qry = "SELECT word FROM words WHERE word GLOB '" + like_phrase + "'"
     return(list(map(lambda x: x[0], db.execute(qry).fetchall())))
 
 def exists_word(word, db):
