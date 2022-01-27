@@ -162,9 +162,9 @@ class TextViewWindow(Gtk.Window):
             new = ''
             seen = []
             for word in words:
-                if word.word not in seen:
-                    new += word.word + "\n"
-                    seen.append(word.word)
+                if word.entries[0].word not in seen:
+                    new += word.entries[0].word + "\n"
+                    seen.append(word.entries[0].word)
             win = TextViewWindow(self.title + '_0', new)
             win.show_all()
         elif key_name == 'm':
