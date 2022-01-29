@@ -84,26 +84,6 @@ def deconjugate_word(word, col, db):
     return result
 
 
-'''
-Searches for words at the start of the sentence returns the entries
-'''
-def starts_with_search(sentance, col, db, deconjugate_json):
-    results = []
-    i = len(sentance)
-    while i > 0 and len(results) < 10:
-        substring = sentance[0:i]
-        if sql_wrapper.exists_word(substring, db):
-            results.append(substring)
-            i-=1
-            continue
-        possible_words = deconjugate_word(substring, col, db, deconjugate_json)
-        for word in possible_words:
-            if word not in results:
-                results.append(word)
-        i-=1
-
-    return results
-
 
 # Converts all katakana to hiragana
 def katakana_to_hiragana(word):
