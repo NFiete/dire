@@ -24,9 +24,10 @@ It works by:
 
 
 class Entry_Set():
-    def __init__(self, entries, orig_len):
+    def __init__(self, entries, orig_len, num_deconjugatins):
         self.entries = entries
         self.orig_len = orig_len
+        self.num_deconjugations = num_deconjugatins
         if config.dict_order != None:
             def key(entry):
                 return config.dict_order[entry.dictionary]
@@ -34,14 +35,22 @@ class Entry_Set():
         self.entries = entries
 
     def __lt__(self, other):
+        if self.orig_len == other.orig_len:
+            return self.num_deconjugations < other.num_deconjugations
         return self.orig_len > other.orig_len
     def __gt__(self, other):
+        if self.orig_len == other.orig_len:
+            return self.num_deconjugations > other.num_deconjugations
         return self.orig_len < other.orig_len
     def __eq__(self, other):
         return self.entries[0] == other.entries[0]
     def __le__(self, other):
+        if self.orig_len == other.orig_len:
+            return self.num_deconjugations <= other.num_deconjugations
         return self.orig_len >= other.orig_len
     def __ge__(self, other):
+        if self.orig_len == other.orig_len:
+            return self.num_deconjugations >= other.num_deconjugations
         return self.orig_len <= other.orig_len
     def __ne__(self, other):
         return self.entries[0] != other.entries[0]
@@ -56,6 +65,7 @@ def deconjugate_word(word, col, db):
     seen = [word]
     possibilities = [word]
     result = []
+    num_conj = 0
     while len(possibilities) > 0:
         cur_word = possibilities.pop()
         for inflection in conjugations:
@@ -63,12 +73,13 @@ def deconjugate_word(word, col, db):
                 new_word = re.sub(inflection[0] + '$',
                         inflection[1],
                         cur_word)
+                num_conj+=1
                 if new_word not in seen:
                     possibilities.append(new_word)
                     seen.append(new_word)
                 lookup = sql_wrapper.searchWord(new_word, db, col=col)
                 if len(lookup) > 0:
-                    result.append(Entry_Set(lookup, len(word)))
+                    result.append(Entry_Set(lookup, len(word), num_conj))
 
     return result
 
@@ -185,7 +196,7 @@ def sentance_search(sentance, col, db):
         substring = sentance[0:i]
         lookup = sql_wrapper.searchWord(substring, db, col=col)
         if len(lookup) > 0:
-            results.append(Entry_Set(lookup, i))
+            results.append(Entry_Set(lookup, i, 0))
             i-=1
             continue
         possible_words = deconjugate_word(substring, col, db)
