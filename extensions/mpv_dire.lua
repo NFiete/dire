@@ -11,7 +11,7 @@ end
 
 function print_subs()
 	local subs = mp.get_property('sub-text')
-	run_cmd('dire_send_text video', subs)
+	run_cmd('dire_send_text -a video', subs)
 end
 
 
