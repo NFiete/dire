@@ -1,3 +1,4 @@
+#!/bin/python
 #Maybe change to multipocessing
 import threading
 import socket
@@ -14,8 +15,8 @@ win = None
 
 
 
-parser = argparse.ArgumentParser(description='tjna japanese reader')
-parser.add_argument('file', type=str,
+parser = argparse.ArgumentParser(description='dictionary integrated reading environment')
+parser.add_argument('file', type=str, default=None,
         help='the file to open')
 parser.add_argument('-n', '--name', dest='name', default=None,
         help='the name for this instance')
@@ -30,11 +31,14 @@ else:
     name = os.path.expanduser('~') + '/.config/dire/sockets/' + args.name
 
 if os.path.exists(name):
-    print('already exists esiting')
+    print('already exists exiting')
     exit(-1)
 
 
-my_text = open(file_name, 'r').read()
+if file_name == None:
+    my_text = ""
+else:
+    my_text = open(file_name, 'r').read()
 win = gtk_frontend.TextViewWindow(title, my_text)
 win.connect("destroy", Gtk.main_quit)
 
@@ -66,7 +70,17 @@ def listen_for_text(name):
     while True:
         conn, addr = s.accept()
         my_str = recvall(conn).decode('utf-8')
-        GLib.idle_add(win.set_text, my_str)
+        if my_str[0] == 's':
+            GLib.idle_add(win.set_text, my_str[1::])
+        elif my_str[0] == 'a':
+            GLib.idle_add(win.append_text, my_str[1::])
+        elif my_str[0] == 'p':
+            GLib.idle_add(win.push_text, my_str[1::])
+        else:
+            GLib.idle_add(win.set_text, my_str)
+
+
+
     return 0
 
 x = threading.Thread(target=listen_for_text, args=(name,))

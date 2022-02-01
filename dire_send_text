@@ -1,0 +1,27 @@
+#!/bin/python
+import socket, sys, os
+import argparse
+
+
+def usage():
+    print('dire_send_text  <NAME> <TEXT>')
+
+if len(sys.argv) < 3:
+    usage()
+
+parser = argparse.ArgumentParser(description='dire send text')
+parser.add_argument('name', type=str, help='name of the dire instance')
+parser.add_argument('text', type=str, help='the text to send')
+parser.add_argument('-t', dest='type', default='s',
+        help='the type of action (a)ppend, (p)ush, or (s)et. defaults to set')
+args = parser.parse_args()
+name = args.name
+text = args.text
+prefix = args.type
+print(name)
+print(text)
+print(prefix)
+s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+home = os.path.expanduser('~')
+s.connect(home + '/.config/dire/sockets/' + name)
+s.sendall(bytes(prefix + text, 'utf-8'))
