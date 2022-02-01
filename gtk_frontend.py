@@ -113,7 +113,6 @@ class TextViewWindow(Gtk.Window):
         if self.next_jump:
             self.jump_mark(key_name)
         elif key_name == 'Escape':
-            print(not self.textview.get_editable())
             self.textview.set_editable(not self.textview.get_editable())
         elif key_name == 'w':
             cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
@@ -229,7 +228,6 @@ class TextViewWindow(Gtk.Window):
             self.new_win_lookup_results(search.entry.get_text(), response)
             search.hide()
 
-        print(key_name)
 
 
 
