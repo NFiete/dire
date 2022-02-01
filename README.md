@@ -1,12 +1,12 @@
 # DIRE: Dictionary Integrated Reading Environment
 
-(include a image here.)
-(also a gif with a video or something)
+![basic screenshot](basic_screenshot.png)
+![usage video](./sub_demo-2022-01-31_10.26.10.webm)
 
 Dire is a dictionary program meant for language learners. When reading in a
 foreign language learners will have to look up thousands of words. Therefore
 Dire tries to make it as easy as possible to look up a word. Dire is able to
-handle word conjugations languges without spaces (like Japanese), and works with
+handle word conjugations languages without spaces (like Japanese), and works with
 the dictionaries you use.
 
 Also because Dire just handles text it works well for recursive lookups.
@@ -14,13 +14,27 @@ Also because Dire just handles text it works well for recursive lookups.
 Dire is also extensible allowing for easy integration with other applications.
 
 
-# Installation
+# Setup
+
+## Quick setup
+
+For a quick setup with some sensible defaults see.
+
+quick.md
+
+## DIY install
+
+### Installation
 
 See Install.md
 
-# Getting Dictionaries
+### Getting Dictionaries
 
 See dicts.md
+
+# Usage
+
+See usage.md
 
 # Configuraton
 
