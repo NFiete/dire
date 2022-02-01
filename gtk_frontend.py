@@ -20,6 +20,7 @@ class TextViewWindow(Gtk.Window):
         self.grid = Gtk.Grid()
         self.add(self.grid)
 
+        self.text = text
         self.create_textview(text)
         self.textview.set_editable(False)
         self.size = 23
@@ -56,11 +57,25 @@ class TextViewWindow(Gtk.Window):
 
 
     def to_begining(self):
-        self.textbuffer.place_cursor(self.textview.get_buffer().get_iter_at_offset(0))
+        self.textbuffer.place_cursor(self.textbuffer.get_iter_at_offset(0))
 
     def set_text(self, new_text):
+        self.text = new_text
         self.textbuffer.set_text(new_text)
         self.set_font_size()
+
+    def append_text(self, new_text):
+        self.textbuffer.place_cursor(self.textbuffer.get_end_iter())
+        self.textbuffer.insert_at_cursor("\n" + new_text)
+        self.textbuffer.place_cursor(self.textbuffer.get_end_iter())
+        self.set_font_size()
+        cur = self.textbuffer.get_insert()
+        self.textview.scroll_mark_onscreen(cur)
+
+    def push_text(self, new_text):
+        self.to_begining()
+        self.textbuffer.insert_at_cursor("\n" + new_text)
+        self.to_begining()
 
     def add_mark(self, widget, event):
         cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
