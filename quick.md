@@ -30,4 +30,4 @@ terminal.
 * (insert download command)
 * tar -xvf (name)
 * cd dire
-* sudo sh quick\_setup.sh
+* sh quick\_setup.sh
