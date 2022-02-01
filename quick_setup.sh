@@ -16,5 +16,5 @@ python ./converters/add_yomi_conj_dict.py ./converters/deinflect.json
 sudo ln -s "$(pwd)/main.py /usr/bin/dire"
 sudo ln -s "$(pwd)/dire_send_text.py" /usr/bin/dire_send_text
 sudo ln -s "$(pwd)/dire_cli" /usr/bin/dire_cli
-mkdir /usr/share/dire
-cp default_config.py /usr/share/dire/config.py
+sudo mkdir /usr/share/dire
+sudo cp default_config.py /usr/share/dire/config.py
