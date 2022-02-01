@@ -11,7 +11,7 @@ class SearchDialog(Gtk.Dialog):
         self.add_buttons(
             "Exact",
             0,
-            "Regex",
+            "Glob",
             1,
             Gtk.STOCK_CANCEL,
             -1,
