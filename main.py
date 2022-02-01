@@ -23,7 +23,7 @@ elif not os.path.exists(home + '/.config/dire/sockets'):
     os.mkdir(home + '/.config/dire/sockets')
 
 parser = argparse.ArgumentParser(description='dictionary integrated reading environment')
-parser.add_argument('file', type=str, default=None,
+parser.add_argument('file', type=str, default=None, nargs='?',
         help='the file to open')
 parser.add_argument('-n', '--name', dest='name', default=None,
         help='the name for this instance')
