@@ -15,6 +15,13 @@ win = None
 
 
 
+home = os.path.expanduser('~')
+if not os.path.exists(home + '/.config/dire'):
+    os.mkdir(home + '/.config/dire')
+    os.mkdir(home + '/.config/dire/sockets')
+elif not os.path.exists(home + '/.config/dire/sockets'):
+    os.mkdir(home + '/.config/dire/sockets')
+
 parser = argparse.ArgumentParser(description='dictionary integrated reading environment')
 parser.add_argument('file', type=str, default=None,
         help='the file to open')
