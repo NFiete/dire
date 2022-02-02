@@ -10,9 +10,9 @@ mkdir ./converters/dicts/jm
 mkdir ./converters/kanji_dicts/kanji
 unzip jm.zip -d ./converters/dicts/jm
 unzip kanji.zip -d ./converters/kanji_dicts/kanji
-python ./converters/add_yomichan_dict.py ./converters/dicts
-python ./converters/add_kanji_dict.py ./converters/kanji_dicts
-python ./converters/add_yomi_conj_dict.py ./converters/deinflect.json
+python3 ./converters/add_yomichan_dict.py ./converters/dicts
+python3 ./converters/add_kanji_dict.py ./converters/kanji_dicts
+python3 ./converters/add_yomi_conj_dict.py ./converters/deinflect.json
 sudo ln -s "$(pwd)/main.py" /usr/bin/dire
 sudo ln -s "$(pwd)/dire_send_text.py" /usr/bin/dire_send_text
 sudo ln -s "$(pwd)/dire_cli" /usr/bin/dire_cli
