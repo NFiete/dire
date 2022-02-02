@@ -15,8 +15,6 @@ class TextViewWindow(Gtk.Window):
         Gtk.Window.__init__(self, title=name)
         self.title = name
 
-        self.set_default_size(-1, 350)
-
         self.grid = Gtk.Grid()
         self.add(self.grid)
 
