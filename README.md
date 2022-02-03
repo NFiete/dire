@@ -22,13 +22,8 @@ For a quick setup with some sensible defaults see.
 
 quick.md
 
-## DIY install
 
-### Installation
-
-See Install.md
-
-### Getting Dictionaries
+## Getting Dictionaries
 
 See dicts.md
 

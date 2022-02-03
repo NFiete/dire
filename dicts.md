@@ -41,7 +41,7 @@ Then run the script
 # Adding conjugations
 
 Dire does come with a conjugation table (borrowed from yomichan). You can add it
-with add\_yomi\_conj\_dict.py. To add conjuations run python
+with add\_yomi\_conj\_dict.py. To add conjugations run python
 add\_yomi\_conj\_dict.py deinflection.json. If you did not name the file
 deinflection.json change it accordingly.
 

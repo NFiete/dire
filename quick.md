@@ -1,8 +1,10 @@
 # Dependencies
 
-You need to install dependencies yourself. Install gtk3, python, and sqlite. This
+You need to install dependencies yourself. Install gtk3, python3, and sqlite3. This
 will be different depending on what operating system you are using. These are
 all fairly common so there is a decent chance you already have them installed.
+Additionally to run the setup script you will need wget and unzip. These are
+also fairly common.
 
 # Setup
 
@@ -18,7 +20,7 @@ setup with jm dict and kanjidict. To get this set up
 The quick install creates links in /usr/bin/ to wherever you downloaded the
 software so if you move it you will need to re-run the script. If the program
 did not launch you are likely missing a dependency. Make sure you have installed
-gtk3, python, and sqlite.
+gtk3, python3, and sqlite3.
 
 
 # Every command you need to run
