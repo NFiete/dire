@@ -1,7 +1,7 @@
 # DIRE: Dictionary Integrated Reading Environment
 
 ![basic screenshot](basic_screenshot.png)
-![usage video](./sub_demo-2022-01-31_10.26.10.webm)
+![usage video](./sub_demo.webm)
 
 Dire is a dictionary program meant for language learners. When reading in a
 foreign language learners will have to look up thousands of words. Therefore
