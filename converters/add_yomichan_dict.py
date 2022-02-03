@@ -2,6 +2,7 @@ import sqlite3
 import json
 import os
 import sys
+from japanese import katakana_to_hiragana, has_katakana
 
 tutorial = '''
 Thank you for using <FOO_DICT_PROJECT> here are the instructions on
@@ -35,41 +36,6 @@ database this will do it for you. It will not erase any existing data.
 if len(sys.argv) < 2:
     print(tutorial)
     exit(1)
-
-
-# Converts all katakana to hiragana
-def katakana_to_hiragana(word):
-    kana_dict= { 'ア': 'あ', 'カ': 'か', 'サ': 'さ', 'タ': 'た', 'ナ': 'な',
-            'ハ': 'は', 'マ': 'ま', 'ヤ': 'や', 'ラ': 'ら', 'ワ': 'わ', 'イ':
-            'い', 'キ': 'き', 'シ': 'し', 'チ': 'ち', 'ニ': 'に', 'ヒ': 'ひ',
-            'ミ': 'み', 'リ': 'り', 'ヰ': 'ゐ', 'ウ': 'う', 'ク': 'く', 'ス':
-            'す', 'ツ': 'つ', 'ヌ': 'ぬ', 'フ': 'ふ', 'ム': 'む', 'ユ': 'ゆ',
-            'ル': 'る', 'エ': 'え', 'ケ': 'け', 'セ': 'せ', 'テ': 'て', 'ネ':
-            'ね', 'ヘ': 'へ', 'メ': 'め', 'レ': 'れ', 'ヱ': 'ゑ', 'オ': 'お',
-            'コ': 'こ', 'ソ': 'そ', 'ト': 'と', 'ノ': 'の', 'ホ': 'ほ', 'モ':
-            'も', 'ヨ': 'よ', 'ロ': 'ろ', 'ヲ': 'を', 'ン': 'ん', 'ャ': 'ゃ',
-            'ュ': 'ゅ', 'ョ': 'ょ', 'ガ': 'が', 'ギ': 'ぎ', 'グ': 'ぐ', 'ゲ':
-            'げ', 'ゴ': 'ご', 'ザ': 'ざ', 'ジ': 'じ', 'ズ': 'ず', 'ゼ': 'ぜ',
-            'ゾ': 'ぞ', 'ダ': 'だ', 'ヂ': 'ぢ', 'ヅ': 'づ', 'デ': 'で', 'ド':
-            'ど', 'バ': 'ば', 'ビ': 'び', 'ブ': 'ぶ', 'ベ': 'べ', 'ボ': 'ぼ',
-            'パ': 'ぱ', 'ピ': 'ぴ', 'プ': 'ぷ', 'ペ': 'ぺ', 'ポ': 'ぽ', 'ー':
-            'ー', "ッ": "っ"}
-    result = ""
-    for char in word:
-        if char in kana_dict:
-            result += kana_dict[char]
-        else:
-            result += char
-
-    return result
-
-# Returns true if the sentance has kanatana it it false otherwise
-def has_katakana(sentance):
-    katakana = [ 'ア', 'カ', 'サ', 'タ', 'ナ', 'ハ', 'マ', 'ヤ', 'ラ', 'ワ', 'イ', 'キ', 'シ', 'チ', 'ニ', 'ヒ', 'ミ', 'リ', 'ヰ', 'ウ', 'ク', 'ス', 'ツ', 'ヌ', 'フ', 'ム', 'ユ', 'ル', 'エ', 'ケ', 'セ', 'テ', 'ネ', 'ヘ', 'メ', 'レ', 'ヱ', 'オ', 'コ', 'ソ', 'ト', 'ノ', 'ホ', 'モ', 'ヨ', 'ロ', 'ヲ', 'ン', 'ャ', 'ュ', 'ョ' ]
-    for char in sentance:
-        if char in katakana:
-            return True
-    return False
 
 
 

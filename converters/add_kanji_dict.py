@@ -2,6 +2,7 @@ import sqlite3
 import json
 import os
 import sys
+from japanese import katakana_to_hiragana
 
 def init_db(name):
     con = sqlite3.connect(name)
@@ -12,95 +13,6 @@ def init_db(name):
     cur.execute('''CREATE TABLE glyphs (glyph, pronunciations)''')
     cur.execute('''CREATE TABLE words (word)''')
     cur.execute('''CREATE TABLE conjugation (conjugation, deconjugation)''')
-
-# Converts all katakana to hiragana
-def katakana_to_hiragana(word):
-    kana_dict= { 'ア': 'あ',
-            'カ': 'か',
-            'サ': 'さ',
-            'タ': 'た',
-            'ナ': 'な',
-            'ハ': 'は',
-            'マ': 'ま',
-            'ヤ': 'や',
-            'ラ': 'ら',
-            'ワ': 'わ',
-            'イ': 'い',
-            'キ': 'き',
-            'シ': 'し',
-            'チ': 'ち',
-            'ニ': 'に',
-            'ヒ': 'ひ',
-            'ミ': 'み',
-            'リ': 'り',
-            'ヰ': 'ゐ',
-            'ウ': 'う',
-            'ク': 'く',
-            'ス': 'す',
-            'ツ': 'つ',
-            'ヌ': 'ぬ',
-            'フ': 'ふ',
-            'ム': 'む',
-            'ユ': 'ゆ',
-            'ル': 'る',
-            'エ': 'え',
-            'ケ': 'け',
-            'セ': 'せ',
-            'テ': 'て',
-            'ネ': 'ね',
-            'ヘ': 'へ',
-            'メ': 'め',
-            'レ': 'れ',
-            'ヱ': 'ゑ',
-            'オ': 'お',
-            'コ': 'こ',
-            'ソ': 'そ',
-            'ト': 'と',
-            'ノ': 'の',
-            'ホ': 'ほ',
-            'モ': 'も',
-            'ヨ': 'よ',
-            'ロ': 'ろ',
-            'ヲ': 'を',
-            'ン': 'ん',
-            'ャ': 'ゃ',
-            'ュ': 'ゅ',
-            'ョ': 'ょ',
-            'ガ': 'が',
-            'ギ': 'ぎ',
-            'グ': 'ぐ',
-            'ゲ': 'げ',
-            'ゴ': 'ご',
-            'ザ': 'ざ',
-            'ジ': 'じ',
-            'ズ': 'ず',
-            'ゼ': 'ぜ',
-            'ゾ': 'ぞ',
-            'ダ': 'だ',
-            'ヂ': 'ぢ',
-            'ヅ': 'づ',
-            'デ': 'で',
-            'ド': 'ど',
-            'バ': 'ば',
-            'ビ': 'び',
-            'ブ': 'ぶ',
-            'ベ': 'べ',
-            'ボ': 'ぼ',
-            'パ': 'ぱ',
-            'ピ': 'ぴ',
-            'プ': 'ぷ',
-            'ペ': 'ぺ',
-            'ポ': 'ぽ',
-            'ー': 'ー'
-    }
-    result = ""
-    for char in word:
-        if char in kana_dict:
-            result += kana_dict[char]
-        else:
-            result += char
-
-    return result
 
 def process_onyomi(text):
     text = katakana_to_hiragana(text)
