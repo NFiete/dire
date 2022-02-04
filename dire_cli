@@ -1,0 +1,25 @@
+#!/bin/python
+import japanese
+import sql_wrapper
+import sys
+
+con = sql_wrapper.startConnection()
+
+if sys.argv[1] == '-g':
+    results = sql_wrapper.like_search(sys.argv[2], con)
+elif sys.argv[1] == '-q':
+    words = japanese.start_lookup(sys.argv[2][0:min(len(sys.argv[2]), 20)],con)
+    results = []
+    seen = []
+    for word in words:
+        if word.entries[0].word not in seen:
+            results.append(word.entries[0].word)
+            seen.append(word.entries[0].word)
+elif sys.argv[1] == '-d':
+    results = sql_wrapper.contains_search(sys.argv[2], 'definition', con)
+else:
+    results = japanese.start_lookup(sys.argv[1][0:min(20, len(sys.argv[1]))], con)
+
+print('\n'.join(map(str, results)))
+
+

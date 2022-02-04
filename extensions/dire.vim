@@ -38,3 +38,14 @@ function DireGlob()
 	normal! gg
 endfunction
 
+function DireDefinitionSearch()
+	call inputsave()
+	let word = input('search definiton: ')
+	call inputrestore()
+	let cmd = "dire_cli -d " . "'" . word . "'"
+	let def = system(cmd)
+	tabnew
+	call append(0, split(def, '\v\n'))
+	normal! gg
+endfunction
+
