@@ -91,7 +91,7 @@ class TextViewWindow(Gtk.Window):
 
     def new_win_lookup_results(self, word, type_lookup):
         if type_lookup == 0:
-            words = japanese.start_lookup(word[0:min(len(word), 10)],
+            words = japanese.start_lookup(word[0:min(len(word), 20)],
                     self.con)
             if len(words) == 0:
                 return
@@ -99,6 +99,10 @@ class TextViewWindow(Gtk.Window):
         elif type_lookup == 1:
             results = sql_wrapper.like_search(word, self.con)
             new = '\n'.join(results)
+        elif type_lookup == 2:
+            results = sql_wrapper.contains_search(word, 'definition', self.con)
+            new = '\n'.join(results)
+
 
         win = TextViewWindow(self.title + '_0', new)
         win.show_all()
@@ -213,6 +217,13 @@ class TextViewWindow(Gtk.Window):
             self.increase_font_size()
         elif key_name == 's':
             search = SearchDialog(self, 0)
+            response = search.run()
+            if response < 0:
+                return
+            self.new_win_lookup_results(search.entry.get_text(), response)
+            search.hide()
+        elif key_name == 'd':
+            search = SearchDialog(self, 2)
             response = search.run()
             if response < 0:
                 return

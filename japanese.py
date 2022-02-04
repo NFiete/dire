@@ -153,7 +153,6 @@ def to_hiragana_possible(word, db):
         if no_new:
             result_possible = list(map(lambda x: x + word[i::],
                 og_possibilities))
-            print(result_possible)
             return result_possible
     return result_possible
 

@@ -94,10 +94,14 @@ def search_pronunciation(pronunciation, db):
     results = list(db.execute(qry).fetchall())
     return list(map(lambda x: Entry(x[1], x[2], x[3], x[4]), results))
 
-i = 0
 def pronunciation_exists(pronunciation, db):
     qry = f'SELECT pronc FROM proncs WHERE pronc="{pronunciation}" LIMIT 1'
     return len(list(db.execute(qry).fetchall())) > 0
+
+def contains_search(term, col, db):
+    qry=f'SELECT DISTINCT word FROM dicts WHERE {col} LIKE "%{term}%"'
+    results = db.execute(qry).fetchall()
+    return list(map(lambda x: x[0], results))
 
 
 def like_search(like_phrase, db):

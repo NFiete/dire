@@ -13,6 +13,8 @@ class SearchDialog(Gtk.Dialog):
             0,
             "Glob",
             1,
+            "Defn",
+            2,
             Gtk.STOCK_CANCEL,
             -1,
         )
