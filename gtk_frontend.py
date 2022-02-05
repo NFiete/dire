@@ -94,6 +94,7 @@ class TextViewWindow(Gtk.Window):
     def jump_mark(self, mark):
         my_mark = self.textbuffer.get_mark(mark)
         if my_mark == None:
+            self.next_jump = False
             return
         itr = self.textbuffer.get_iter_at_mark(my_mark)
         self.next_jump = False
