@@ -30,9 +30,17 @@ parser.add_argument('-n', '--name', dest='name', default=None,
 
 args = parser.parse_args()
 file_name = args.file
+socket_dir = os.path.expanduser('~') + '/.config/dire/sockets/'
 if args.name == None:
+    names = ['himari', 'tsumugi', 'rin', 'mei', 'aoi', 'hina', 'mio', 'riko',
+            'subaru', 'sora']
+    sockets = os.listdir(socket_dir)
     title = str(time.time())
-    name = os.path.expanduser('~') + '/.config/dire/sockets/' + title
+    for name in names:
+        if name not in sockets:
+            title = name
+            break
+    name =  socket_dir + title
 else:
     title = args.name
     name = os.path.expanduser('~') + '/.config/dire/sockets/' + args.name
