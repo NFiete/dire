@@ -2,6 +2,7 @@ import japanese
 import sql_wrapper
 from search_dialog import SearchDialog
 
+import sys, os
 import gi
 
 gi.require_version("Gtk", "3.0")
@@ -9,6 +10,15 @@ from gi.repository import Gtk, Pango
 from gi.repository import Gdk
 
 
+if os.path.exists(os.path.expanduser('~') + '/.config/dire/config.py'):
+    sys.path.append(os.path.expanduser('~') + '/.config/dire/')
+elif os.path.exists('/usr/share/dire/config.py'):
+    sys.path.append('/usr/share/dire/')
+else:
+    print("Critical file missing config.py exiting...")
+    exit(1)
+
+import config
 
 class TextViewWindow(Gtk.Window):
     def __init__(self, name, text):
@@ -116,7 +126,7 @@ class TextViewWindow(Gtk.Window):
             self.jump_mark(key_name)
         elif key_name == 'Escape':
             self.textview.set_editable(not self.textview.get_editable())
-        elif key_name == 'w':
+        elif key_name == config.keybindings['jump_forward']:
             cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
             prev_cur = cur_cur.copy()
             prev_cur.forward_char()
@@ -128,7 +138,7 @@ class TextViewWindow(Gtk.Window):
                 cur_cur.forward_char()
                 cur_text = self.textbuffer.get_text(cur_cur, prev_cur, False)
             self.textbuffer.place_cursor(cur_cur)
-        elif key_name == 'b':
+        elif key_name == config.keybindings['jump_back']:
             cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
             prev_cur = cur_cur.copy()
             prev_cur.backward_char()
@@ -140,17 +150,17 @@ class TextViewWindow(Gtk.Window):
                 cur_cur.backward_char()
                 cur_text = self.textbuffer.get_text(prev_cur, cur_cur, False)
             self.textbuffer.place_cursor(cur_cur)
-        elif key_name == 'l':
+        elif key_name == config.keybindings['right']:
             buf = self.textview.get_buffer()
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
             cur_cur.forward_chars(1)
             buf.place_cursor(cur_cur)
-        elif key_name == 'h':
+        elif key_name == config.keybindings['left']:
             buf = self.textview.get_buffer()
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
             cur_cur.backward_chars(1)
             buf.place_cursor(cur_cur)
-        elif key_name == 'j':
+        elif key_name == config.keybindings['down']:
             # TODO: There is a better way to do this probably. In the gtk source
             # code they use gtk_widget_class_add_binding_signal (gtktextview.c
             # line 800 is where the use it defined on 4328 of gtkwidget.c) But
@@ -161,13 +171,13 @@ class TextViewWindow(Gtk.Window):
             loc = self.textview.get_cursor_locations()[0]
             new_cur = self.textview.get_iter_at_location(loc.x, loc.y + loc.height*1.3)[1]
             self.textbuffer.place_cursor(new_cur)
-        elif key_name == 'k':
+        elif key_name == config.keybindings['up']:
             # TODO: see above. Also this doesn't totally work for paragraphs
             cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
             loc = self.textview.get_cursor_locations()[0]
             new_cur = self.textview.get_iter_at_location(loc.x, loc.y - loc.height*.5)[1]
             self.textbuffer.place_cursor(new_cur)
-        elif key_name == 'q':
+        elif key_name == config.keybindings['possible_search']:
             buf = self.textview.get_buffer()
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
             cur_cur2 = cur_cur.copy()
@@ -183,27 +193,27 @@ class TextViewWindow(Gtk.Window):
                     seen.append(word.entries[0].word)
             win = TextViewWindow(self.title + '_0', new)
             win.show_all()
-        elif key_name == 'm':
+        elif key_name == config.keybindings['create_mark']:
             self.next_mark = True
-        elif key_name == 'apostrophe':
+        elif key_name == config.keybindings['goto_mark']:
             self.next_jump = True
-        elif key_name == 'a':
+        elif key_name == config.keybindings['search']:
             buf = self.textview.get_buffer()
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
             cur_cur2 = cur_cur.copy()
             cur_cur2.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)
             self.new_win_lookup_results(cur_text, 0)
-        elif key_name == 'e':
+        elif key_name == config.keybindings['line_search']:
             buf = self.textbuffer
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
             cur_cur2 = cur_cur.copy()
             cur_cur2.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)[:-1]
             self.new_win_lookup_results(cur_text, 0)
-        elif key_name == 'g':
+        elif key_name == config.keybindings['goto_beginning']:
             self.textbuffer.place_cursor(self.textbuffer.get_iter_at_offset(0))
-        elif key_name == 'G':
+        elif key_name == config.keybindings['goto_end']:
             self.textbuffer.place_cursor(self.textbuffer.get_end_iter())
         elif key_name == 'p':
             self.size +=1
@@ -211,25 +221,25 @@ class TextViewWindow(Gtk.Window):
                     font_desc=Pango.FontDescription.from_string(str(self.size)))
             self.textbuffer.apply_tag(tag, self.textbuffer.get_start_iter(),
                     self.textbuffer.get_end_iter())
-        elif key_name == 'minus':
+        elif key_name == config.keybindings['decrease_font']:
             self.decrease_font_size()
-        elif key_name == 'plus':
+        elif key_name == config.keybindings['increase_font']:
             self.increase_font_size()
-        elif key_name == 's':
+        elif key_name == config.keybindings['search_prompt']:
             search = SearchDialog(self, 0)
             response = search.run()
             if response < 0:
                 return
             self.new_win_lookup_results(search.entry.get_text(), response)
             search.hide()
-        elif key_name == 'd':
+        elif key_name == config.keybindings['dict_search']:
             search = SearchDialog(self, 2)
             response = search.run()
             if response < 0:
                 return
             self.new_win_lookup_results(search.entry.get_text(), response)
             search.hide()
-        elif key_name == 'r':
+        elif key_name == config.keybindings['glob_search']:
             search = SearchDialog(self, 1)
             response = search.run()
             if response < 0:
