@@ -193,7 +193,8 @@ def sentance_search(sentance, col, db):
                     substring)
             results.append(Entry_Set(lookup, i, 0))
             i-=1
-            continue
+            #This was a bad idea should put it in deconjugate word
+            #continue
         possible_words = deconjugate_word(substring, col, db)
         for word in possible_words:
             if word not in results:
