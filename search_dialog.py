@@ -2,14 +2,14 @@
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Pango
+from gi.repository import Gtk
 from gi.repository import Gdk
 
 class SearchDialog(Gtk.Dialog):
     def __init__(self, parent, default):
         super().__init__(title="Search", transient_for=parent, modal=True)
         self.add_buttons(
-            "Exact",
+            "Sentance",
             0,
             "Glob",
             1,
