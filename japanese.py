@@ -13,7 +13,6 @@ import re #To check if a word ends with a given string. May remove
 import config
 
 
-
 '''
 The main point of this file is do define the start_lookup method which given a
 piece of Japanese text will take the start of it and find all the possible words
@@ -59,6 +58,21 @@ class Entry_Set():
         return '\n'.join(str_entry)
 
 
+def get_user_results(fun_lst, word, orig_text):
+    result = []
+    for usr_search in fun_lst:
+        results = usr_search(word, orig_text)
+        if results != None:
+            result.append(sql_wrapper.Entry(word, '', results,
+                usr_search.__name__))
+    return result
+
+def search_word(word, db, col):
+    lookup = sql_wrapper.searchWord(word, db, col=col)
+    lookup += get_user_results(config.user_possible_searches, word, word)
+    return lookup
+
+
 # Return all possible deconjugations do not check if actually a word
 def deconjugate_word(word, col, db):
     conjugations = sql_wrapper.get_conjugations(db)
@@ -77,9 +91,13 @@ def deconjugate_word(word, col, db):
                 if new_word not in seen:
                     possibilities.append(new_word)
                     seen.append(new_word)
-                lookup = sql_wrapper.searchWord(new_word, db, col=col)
+                lookup = search_word(new_word, db, col=col)
                 if len(lookup) > 0:
-                    result.append(Entry_Set(lookup, len(word), num_conj))
+                    #This only runs when not an exact match Probably should
+                    #refactor
+                    usr_results = get_user_results(config.user_defined_searches,
+                            new_word, word)
+                    result.append(Entry_Set(lookup + usr_results, len(word), num_conj))
 
     return result
 
@@ -169,8 +187,10 @@ def sentance_search(sentance, col, db):
     i = len(sentance)
     while i > 0 and len(results) < 10:
         substring = sentance[0:i]
-        lookup = sql_wrapper.searchWord(substring, db, col=col)
+        lookup = search_word(substring, db, col=col)
         if len(lookup) > 0:
+            lookup += get_user_results(config.user_defined_searches, substring,
+                    substring)
             results.append(Entry_Set(lookup, i, 0))
             i-=1
             continue

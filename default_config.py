@@ -21,3 +21,8 @@ keybindings = {
         'up': 'k',
         'right': 'l'
         }
+
+user_defined_searches=[]
+
+user_possible_searches = []
+

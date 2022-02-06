@@ -8,7 +8,10 @@ class Entry:
     def __init__(self, word, pronunciaton, meanings, dictonary):
         self.word = word
         self.pronunciation = pronunciaton
-        self.meaings = json.loads(meanings)
+        if type(meanings) == list:
+            self.meaings = meanings
+        else:
+            self.meaings = json.loads(meanings)
         self.dictionary = dictonary
     def __str__(self):
         out_str = [self.dictionary, self.word, self.pronunciation] + self.meaings
