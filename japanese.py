@@ -61,15 +61,18 @@ class Entry_Set():
 def get_user_results(fun_lst, word, orig_text):
     result = []
     for usr_search in fun_lst:
-        results = usr_search(word, orig_text)
-        if results != None:
-            result.append(sql_wrapper.Entry(word, '', results,
-                usr_search.__name__))
+        if usr_search.__name__ in config.dict_order:
+            results = usr_search(word, orig_text)
+            if results != None:
+                result.append(sql_wrapper.Entry(word, '', results,
+                    usr_search.__name__))
     return result
 
 def search_word(word, db, col):
     lookup = sql_wrapper.searchWord(word, db, col=col)
     lookup += get_user_results(config.user_possible_searches, word, word)
+    if config.dict_order != None:
+        lookup = list(filter(lambda x: x.dictionary in config.dict_order, lookup))
     return lookup
 
 
