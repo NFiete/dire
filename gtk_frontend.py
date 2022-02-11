@@ -37,6 +37,7 @@ class TextViewWindow(Gtk.Window):
         self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
                 self.textbuffer.get_end_iter())
         self.connect("key-press-event", self.on_key_press_event)
+        self.connect("key-release-event", self.on_key_release_event)
         self.to_begining()
         self.con = sql_wrapper.startConnection()
 
@@ -118,6 +119,11 @@ class TextViewWindow(Gtk.Window):
         win = TextViewWindow(self.title + '_0', new)
         win.show_all()
 
+    def on_key_release_event(self, widget, event):
+        key_name = Gdk.keyval_name(event.keyval)
+        if key_name == config.keybindings['edit_true']:
+            self.textview.set_editable(True)
+
     def on_key_press_event(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
         if self.next_mark:
@@ -125,8 +131,10 @@ class TextViewWindow(Gtk.Window):
             return
         if self.next_jump:
             self.jump_mark(key_name)
-        elif key_name == 'Escape':
-            self.textview.set_editable(not self.textview.get_editable())
+        elif key_name == config.keybindings['edit_false']:
+            self.textview.set_editable(False)
+        if self.textview.get_editable():
+            return
         elif key_name == config.keybindings['jump_forward']:
             cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
             prev_cur = cur_cur.copy()

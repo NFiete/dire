@@ -1,6 +1,5 @@
 dict_order = None
 
-
 keybindings = {
         'search': 'a',
         'line_search': 'e',
@@ -19,7 +18,9 @@ keybindings = {
         'left': 'h',
         'down': 'j',
         'up': 'k',
-        'right': 'l'
+        'right': 'l',
+        'edit_true': 'i',
+        'edit_false': 'Escape'
         }
 
 user_defined_searches=[]
