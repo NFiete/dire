@@ -61,7 +61,7 @@ class Entry_Set():
 def get_user_results(fun_lst, word, orig_text):
     result = []
     for usr_search in fun_lst:
-        if usr_search.__name__ in config.dict_order:
+        if config.dict_order == None or usr_search.__name__ in config.dict_order:
             results = usr_search(word, orig_text)
             if results != None:
                 result.append(sql_wrapper.Entry(word, '', results,
