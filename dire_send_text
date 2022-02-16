@@ -18,9 +18,6 @@ args = parser.parse_args()
 name = args.name
 text = args.text
 prefix = args.type
-print(name)
-print(text)
-print(prefix)
 s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 home = os.path.expanduser('~')
 s.connect(home + '/.config/dire/sockets/' + name)
