@@ -6,6 +6,7 @@ import argparse
 import gi
 import time
 import os
+import atexit
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib
@@ -32,22 +33,22 @@ args = parser.parse_args()
 file_name = args.file
 socket_dir = os.path.expanduser('~') + '/.config/dire/sockets/'
 if args.name == None:
-    names = ['himari', 'tsumugi', 'rin', 'mei', 'aoi', 'hina', 'mio', 'riko',
-            'subaru', 'sora']
-    sockets = os.listdir(socket_dir)
-    title = str(time.time())
-    for name in names:
-        if name not in sockets:
-            title = name
-            break
+    title = 'dire'
     name =  socket_dir + title
 else:
     title = args.name
     name = os.path.expanduser('~') + '/.config/dire/sockets/' + args.name
 
+@atexit.register
+def cleanup():
+    global name
+    if os.path.exists(name):
+        os.remove(name)
+
+
 if os.path.exists(name):
-    print('already exists exiting')
-    exit(-1)
+    print('WARNING: removing old socket')
+    cleanup()
 
 
 if file_name == None:
@@ -94,8 +95,6 @@ def listen_for_text(name):
         else:
             GLib.idle_add(win.set_text, my_str)
 
-
-
     return 0
 
 x = threading.Thread(target=listen_for_text, args=(name,))
@@ -103,5 +102,4 @@ x.daemon = True
 x.start()
 win.show_all()
 Gtk.main()
-os.remove(name)
 exit(0)
