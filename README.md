@@ -20,20 +20,20 @@ Dire is also extensible allowing for easy integration with other applications.
 
 For a quick setup with some sensible defaults see.
 
-quick.md
+[quick.md](quick.md)
 
 
 ## Getting Dictionaries
 
-See dicts.md
+See [dicts.md](dicts.md)
 
 # Usage
 
-See usage.md
+See [usage.md](usage.md)
 
 # Configuraton
 
-See config.md
+See [config.md](config.md)
 
 
 # Licence
@@ -43,4 +43,4 @@ GPLv3 see LICENCE for more information
 # Other projects
 * yomichan: A big source of inspiration for this project. The reason I started this is because I wanted something like yomichan outside of the browser. https://foosoft.net/projects/yomichan/
 * qolibi: Another Japanese dictionary which influenced several design decisions: https://github.com/ludios/qolibri
-* Migaku dictionary: Another source of many good ideas. https://github.com/migaku-official/Migaku-Dictionary-Addon
+* Migaku dictionary: Another source of many good ideas. The forvo search in extensions was adapted from the Migaku dictionary. https://github.com/migaku-official/Migaku-Dictionary-Addon

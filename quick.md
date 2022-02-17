@@ -30,6 +30,6 @@ terminal.
 
 * mkdir .dire\_store
 * cd .dire\_store
-* wget "https://github.com/NFiete/dire/releases/download/v0.1.0/dire-0.1.0.tar.gz"
+* git clone https://github.com/NFiete/dire
 * tar xvf dire-0.1.0.tar.gz
 * sh quick\_setup.sh

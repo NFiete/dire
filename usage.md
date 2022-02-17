@@ -22,6 +22,7 @@ keybindings but it is planned.
 |q|Get list of possible words after cursor|
 |e|Lookup current line|
 |s|Create a search box. Will search similar to pressing a|
+|d|Search definition|
 |r|Search with globing. Supports * and ? (more detail below)|
 |m+key|Create a mark with the name of the next key|
 |'+key|Jump to mark with name key|
@@ -33,8 +34,16 @@ keybindings but it is planned.
 |b|Jump back (only functional for Japanese)|
 |arrow keys|Allow movement in text|
 |hjkl|Similar to vi|
+|i|allow editing of text|
+|Escape|Disable editing|
 
 ## Extending
+
+### Custom searches
+
+Dire supports the ability to define your own searches in config.py. These custom
+searches are treated just like dictionaries (see config.md for more detail).
+These are a few examples in extensions/. For more detail see config.md.
 
 ### dire\_send\_text
 
@@ -54,6 +63,7 @@ will try to send text to a dire instance named video.
 
 
 ### how dire\_send\_text works
+
 NOTE: This starts with some kind of technical stuff if you don't care how it
 works (ie you are not trying to write your own client program) then you can skip
 ahead.
@@ -76,6 +86,7 @@ following functions:
 |DireSearchLine|Looks up the current line. Opens in a split|
 |DireSearch|Prompts the user to type in a word to lookup|
 |DireGlob|Prompts the user for a glob search|
+|DireDefinitionSearch|Search the definition of words|
 
 This does not create any keybindings. Currently both vim and neovim are
 supported but this may change in the future.
@@ -85,7 +96,7 @@ supported but this may change in the future.
 
 dire\_cli is a pure cli tool. To search a word type dire\_cli \<WORD\>. It will
 be intelligent in the search like pressing 'a' in the gtk version. You can pass
-in the -g flag to search globbing, and the -q flag to list possibilities.
+in the -g flag to search globbing, -d to search definition, and the -q flag to list possibilities.
 
 
 # Glob searching
