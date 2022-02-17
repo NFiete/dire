@@ -31,5 +31,5 @@ terminal.
 * mkdir .dire\_store
 * cd .dire\_store
 * git clone https://github.com/NFiete/dire
-* tar xvf dire-0.1.0.tar.gz
+* cd dire
 * sh quick\_setup.sh
