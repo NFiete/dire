@@ -28,6 +28,8 @@ class TextViewWindow(Gtk.Window):
         self.grid = Gtk.Grid()
         self.add(self.grid)
 
+        self.set_default_size(400,400)
+
         self.text = text
         self.create_textview(text)
         self.textview.set_editable(False)
