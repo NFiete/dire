@@ -47,6 +47,8 @@ class TextViewWindow(Gtk.Window):
         self.next_mark = False
         self.next_jump = False
 
+        self.cur_search_text = None
+
     def set_font_size(self):
         self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
                 self.textbuffer.get_end_iter())
@@ -130,9 +132,44 @@ class TextViewWindow(Gtk.Window):
         search = SearchDialog(self, default, responses)
         response = search.run()
         if response < 0:
+            search.hide()
             return
         self.new_win_lookup_results(search.entry.get_text(), response)
         search.hide()
+
+    def search_text(self):
+        responses = [("Search", 0),
+                (Gtk.STOCK_CANCEL, -1)]
+        search = SearchDialog(self, 0, responses)
+        response = search.run()
+        if response < 0:
+            return
+        self.cur_search_text = search.entry.get_text()
+        search.hide()
+        self.to_next_forward_search()
+
+    def to_next_forward_search(self):
+        if self.cur_search_text == None:
+            return
+        cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
+        cur_cur.forward_chars(1)
+        forward = cur_cur.forward_search(self.cur_search_text, 0,\
+                self.textbuffer.get_end_iter())
+        if forward == None:
+            return
+        cur_cur = forward[0]
+        self.textbuffer.place_cursor(cur_cur)
+
+    def to_previous_backward_search(self):
+        if self.cur_search_text == None:
+            return
+        cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
+        forward = cur_cur.backward_search(self.cur_search_text, 0,\
+                self.textbuffer.get_start_iter())
+        if forward == None:
+            return
+        cur_cur = forward[0]
+        self.textbuffer.place_cursor(cur_cur)
 
 
     def on_key_release_event(self, widget, event):
@@ -240,12 +277,6 @@ class TextViewWindow(Gtk.Window):
             self.textbuffer.place_cursor(self.textbuffer.get_iter_at_offset(0))
         elif key_name == config.keybindings['goto_end']:
             self.textbuffer.place_cursor(self.textbuffer.get_end_iter())
-        elif key_name == 'p':
-            self.size +=1
-            tag = self.textbuffer.create_tag("font_size",
-                    font_desc=Pango.FontDescription.from_string(str(self.size)))
-            self.textbuffer.apply_tag(tag, self.textbuffer.get_start_iter(),
-                    self.textbuffer.get_end_iter())
         elif key_name == config.keybindings['decrease_font']:
             self.decrease_font_size()
         elif key_name == config.keybindings['increase_font']:
@@ -256,6 +287,12 @@ class TextViewWindow(Gtk.Window):
             self.search_term(1)
         elif key_name == config.keybindings['dict_search']:
             self.search_term(2)
+        elif key_name == config.keybindings['search_text']:
+            self.search_text()
+        elif key_name == config.keybindings['next_text_search']:
+            self.to_next_forward_search()
+        elif key_name == config.keybindings['previous_text_search']:
+            self.to_previous_backward_search()
 
 
 

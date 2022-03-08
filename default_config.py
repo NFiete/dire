@@ -20,7 +20,10 @@ keybindings = {
         'up': 'k',
         'right': 'l',
         'edit_true': 'i',
-        'edit_false': 'Escape'
+        'edit_false': 'Escape',
+        'search_text': 'slash',
+        'next_text_search': 'n',
+        'previous_text_search': 'N'
         }
 
 user_defined_searches=[]

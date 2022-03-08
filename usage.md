@@ -36,6 +36,9 @@ keybindings but it is planned.
 |hjkl|Similar to vi|
 |i|allow editing of text|
 |Escape|Disable editing|
+|slash|Get text to search forward in the text|
+|n|Jump to next match for text search|
+|N|Jump to previous match for text search|
 
 ## Extending
 
