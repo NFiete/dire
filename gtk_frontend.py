@@ -307,12 +307,6 @@ class TextViewWindow(Gtk.Window):
         self.textbuffer.set_text(my_text)
         scrolledwindow.add(self.textview)
 
-        self.tag_bold = self.textbuffer.create_tag("bold", weight=Pango.Weight.BOLD)
-        self.tag_italic = self.textbuffer.create_tag("italic", style=Pango.Style.ITALIC)
-        self.tag_underline = self.textbuffer.create_tag(
-            "underline", underline=Pango.Underline.SINGLE
-        )
-        self.tag_found = self.textbuffer.create_tag("found", background="yellow")
         self.textview.set_wrap_mode(Gtk.WrapMode.CHAR)
 
 
