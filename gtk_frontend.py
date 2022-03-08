@@ -38,6 +38,7 @@ class TextViewWindow(Gtk.Window):
                 font_desc=Pango.FontDescription.from_string(str(self.size)))
         self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
                 self.textbuffer.get_end_iter())
+
         self.connect("key-press-event", self.on_key_press_event)
         self.connect("key-release-event", self.on_key_release_event)
         self.to_begining()
@@ -120,6 +121,19 @@ class TextViewWindow(Gtk.Window):
 
         win = TextViewWindow(self.title + '_0', new)
         win.show_all()
+
+    def search_term(self, default):
+        responses = [("Sentance", 0),
+                ("Glob", 1),
+                ("Defn", 2),
+                (Gtk.STOCK_CANCEL, -1)]
+        search = SearchDialog(self, default, responses)
+        response = search.run()
+        if response < 0:
+            return
+        self.new_win_lookup_results(search.entry.get_text(), response)
+        search.hide()
+
 
     def on_key_release_event(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
@@ -237,27 +251,11 @@ class TextViewWindow(Gtk.Window):
         elif key_name == config.keybindings['increase_font']:
             self.increase_font_size()
         elif key_name == config.keybindings['search_prompt']:
-            search = SearchDialog(self, 0)
-            response = search.run()
-            if response < 0:
-                return
-            self.new_win_lookup_results(search.entry.get_text(), response)
-            search.hide()
-        elif key_name == config.keybindings['dict_search']:
-            search = SearchDialog(self, 2)
-            response = search.run()
-            if response < 0:
-                return
-            self.new_win_lookup_results(search.entry.get_text(), response)
-            search.hide()
+            self.search_term(0)
         elif key_name == config.keybindings['glob_search']:
-            search = SearchDialog(self, 1)
-            response = search.run()
-            if response < 0:
-                return
-            self.new_win_lookup_results(search.entry.get_text(), response)
-            search.hide()
-
+            self.search_term(1)
+        elif key_name == config.keybindings['dict_search']:
+            self.search_term(2)
 
 
 

@@ -6,18 +6,11 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 
 class SearchDialog(Gtk.Dialog):
-    def __init__(self, parent, default):
+    def __init__(self, parent, default, options = None):
         super().__init__(title="Search", transient_for=parent, modal=True)
-        self.add_buttons(
-            "Sentance",
-            0,
-            "Glob",
-            1,
-            "Defn",
-            2,
-            Gtk.STOCK_CANCEL,
-            -1,
-        )
+
+        for option in options:
+            self.add_button(option[0], option[1])
 
         self.default = default
 
