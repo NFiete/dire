@@ -4,6 +4,7 @@ from search_dialog import SearchDialog
 
 import sys, os
 import gi
+from enum import Enum
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Pango
@@ -19,6 +20,13 @@ else:
     exit(1)
 
 import config
+
+
+class Responses(Enum):
+    Sentance = 0
+    Glob = 1
+    Defn = 2
+
 
 class TextViewWindow(Gtk.Window):
     def __init__(self, name, text):
@@ -48,6 +56,8 @@ class TextViewWindow(Gtk.Window):
         self.next_jump = False
 
         self.cur_search_text = None
+
+        self.child = None
 
     def set_font_size(self):
         self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
@@ -120,25 +130,32 @@ class TextViewWindow(Gtk.Window):
             results = sql_wrapper.contains_search(word, 'definition', self.con)
             new = '\n'.join(results)
 
+        return new
 
-        win = TextViewWindow(self.title + '_0', new)
+
+
+    def create_new_win_results(self, text):
+        win = TextViewWindow(self.title + '_0', text)
         win.show_all()
 
+
     def search_term(self, default):
-        responses = [("Sentance", 0),
-                ("Glob", 1),
-                ("Defn", 2),
+        responses = [("Sentance", Responses.Sentance.value),
+                ("Glob", Responses.Glob.value),
+                ("Defn", Responses.Defn.value),
                 (Gtk.STOCK_CANCEL, -1)]
         search = SearchDialog(self, default, responses)
         response = search.run()
         if response < 0:
             search.hide()
             return
-        self.new_win_lookup_results(search.entry.get_text(), response)
+        new = self.new_win_lookup_results(search.entry.get_text(), response)
         search.hide()
+        self.set_text(new)
+        self.to_begining()
 
     def search_text(self):
-        responses = [("Search", 0),
+        responses = [("Search", Responses.Sentance.value),
                 (Gtk.STOCK_CANCEL, -1)]
         search = SearchDialog(self, 0, responses)
         response = search.run()
@@ -265,14 +282,16 @@ class TextViewWindow(Gtk.Window):
             cur_cur2 = cur_cur.copy()
             cur_cur2.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)
-            self.new_win_lookup_results(cur_text, 0)
+            new = self.new_win_lookup_results(cur_text, Responses.Sentance.value)
+            self.create_new_win_results(new)
         elif key_name == config.keybindings['line_search']:
             buf = self.textbuffer
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
             cur_cur2 = cur_cur.copy()
             cur_cur2.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)[:-1]
-            self.new_win_lookup_results(cur_text, 0)
+            new = self.new_win_lookup_results(cur_text, Responses.Sentance.value)
+            self.create_new_win_results(new)
         elif key_name == config.keybindings['goto_beginning']:
             self.textbuffer.place_cursor(self.textbuffer.get_iter_at_offset(0))
         elif key_name == config.keybindings['goto_end']:
@@ -282,11 +301,11 @@ class TextViewWindow(Gtk.Window):
         elif key_name == config.keybindings['increase_font']:
             self.increase_font_size()
         elif key_name == config.keybindings['search_prompt']:
-            self.search_term(0)
+            self.search_term(Responses.Sentance.value)
         elif key_name == config.keybindings['glob_search']:
-            self.search_term(1)
+            self.search_term(Responses.Glob.value)
         elif key_name == config.keybindings['dict_search']:
-            self.search_term(2)
+            self.search_term(Responses.Defn.value)
         elif key_name == config.keybindings['search_text']:
             self.search_text()
         elif key_name == config.keybindings['next_text_search']:
