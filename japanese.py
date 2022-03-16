@@ -181,7 +181,6 @@ def sentance_search(sentance, col, db):
             lookup += get_user_results(config.user_defined_searches, substring,
                     substring)
             results.append(Entry_Set(lookup, i, 0))
-            i-=1
             #This was a bad idea should put it in deconjugate word
             #continue
         possible_words = deconjugate_word(substring, col, db)
@@ -193,7 +192,6 @@ def sentance_search(sentance, col, db):
 
 
 
-#TODO: Have some sorting for length
 def start_lookup(sentance, db):
     results = sentance_search(sentance, 'word', db)
     sentance_kana_start = katakana_to_hiragana(start_kana(sentance))
