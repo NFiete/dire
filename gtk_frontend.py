@@ -58,6 +58,7 @@ class TextViewWindow(Gtk.Window):
         self.cur_search_text = None
 
         self.text_hist = [text]
+        self.text_hist_pos = 0
 
     def set_font_size(self):
         self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
@@ -87,6 +88,18 @@ class TextViewWindow(Gtk.Window):
         self.text = new_text
         self.textbuffer.set_text(new_text)
         self.set_font_size()
+
+    def history_back(self):
+        if self.text_hist_pos > 0:
+            self.text_hist_pos-=1
+            self.set_text(self.text_hist[self.text_hist_pos])
+            self.to_begining()
+
+    def history_forward(self):
+        if self.text_hist_pos < len(self.text_hist) - 1:
+            self.text_hist_pos+=1
+            self.set_text(self.text_hist[self.text_hist_pos])
+            self.to_begining()
 
     def append_text(self, new_text):
         self.textbuffer.place_cursor(self.textbuffer.get_end_iter())
@@ -150,6 +163,8 @@ class TextViewWindow(Gtk.Window):
             search.hide()
             return
         new = self.new_win_lookup_results(search.entry.get_text(), response)
+        self.text_hist.insert(self.text_hist_pos + 1, new)
+        self.text_hist_pos += 1
         search.hide()
         self.set_text(new)
         self.to_begining()
@@ -314,6 +329,10 @@ class TextViewWindow(Gtk.Window):
             self.to_next_forward_search()
         elif key_name == config.keybindings['previous_text_search']:
             self.to_previous_backward_search()
+        elif key_name == config.keybindings['history_back']:
+            self.history_back()
+        elif key_name == config.keybindings['history_forward']:
+            self.history_forward()
 
 
 

@@ -23,7 +23,9 @@ keybindings = {
         'edit_false': 'Escape',
         'search_text': 'slash',
         'next_text_search': 'n',
-        'previous_text_search': 'N'
+        'previous_text_search': 'N',
+        'history_back': 'H',
+        'history_forward': 'L'
         }
 
 user_defined_searches=[]
