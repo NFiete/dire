@@ -4,7 +4,6 @@ import threading
 import socket
 import argparse
 import gi
-import time
 import os
 import atexit
 
@@ -28,6 +27,8 @@ parser.add_argument('file', type=str, default=None, nargs='?',
         help='the file to open')
 parser.add_argument('-n', '--name', dest='name', default=None,
         help='the name for this instance')
+parser.add_argument('-s', '--search', dest='search', default=None,
+        help='text to search. Will overwrite file.')
 
 args = parser.parse_args()
 file_name = args.file
@@ -55,7 +56,10 @@ if file_name == None:
     my_text = ""
 else:
     my_text = open(file_name, 'r').read()
+
 win = gtk_frontend.TextViewWindow(title, my_text)
+if args.search != None:
+    win.set_text(win.new_win_lookup_results(args.search, 0))
 win.connect("destroy", Gtk.main_quit)
 
 
