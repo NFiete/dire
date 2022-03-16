@@ -57,7 +57,7 @@ class TextViewWindow(Gtk.Window):
 
         self.cur_search_text = None
 
-        self.child = None
+        self.text_hist = [text]
 
     def set_font_size(self):
         self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
@@ -289,6 +289,8 @@ class TextViewWindow(Gtk.Window):
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
             cur_cur2 = cur_cur.copy()
             cur_cur2.forward_line()
+            cur_cur.backward_line()
+            cur_cur.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)[:-1]
             new = self.new_win_lookup_results(cur_text, Responses.Sentance.value)
             self.create_new_win_results(new)
