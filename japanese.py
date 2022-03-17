@@ -55,7 +55,7 @@ class Entry_Set():
         return self.entries[0] != other.entries[0]
     def __str__(self):
         str_entry = map(str, self.entries)
-        return '\n'.join(str_entry)
+        return config.result_seperator + '\n'.join(str_entry)
 
 
 def get_user_results(fun_lst, word, orig_text):

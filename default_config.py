@@ -1,5 +1,11 @@
 dict_order = None
 
+
+defn_seperator = '@'
+
+result_seperator = '|---|'
+
+
 keybindings = {
         'search': 'a',
         'line_search': 'e',
@@ -25,7 +31,11 @@ keybindings = {
         'next_text_search': 'n',
         'previous_text_search': 'N',
         'history_back': 'H',
-        'history_forward': 'L'
+        'history_forward': 'L',
+        'next_defn': 'J',
+        'previous_defn': 'K',
+        'next_result': 'f',
+        'previous_result': 'F'
         }
 
 user_defined_searches=[]

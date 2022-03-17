@@ -41,6 +41,10 @@ keybindings but it is planned.
 |N|Jump to previous match for text search|
 |H|Back in history|
 |L|Forward in history|
+|J|Jump to next definition|
+|K|Jump to previous definition|
+|f|Jump to next result|
+|F|Jump to previous result|
 
 ## Extending
 

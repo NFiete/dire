@@ -14,7 +14,7 @@ class Entry:
             self.meaings = json.loads(meanings)
         self.dictionary = dictonary
     def __str__(self):
-        out_str = [self.dictionary, self.word, self.pronunciation] + self.meaings
+        out_str = ['@' + self.dictionary, self.word, self.pronunciation] + self.meaings
         return "\n".join(out_str)
     def __eq__(self, other):
         return self.word == other.word and \

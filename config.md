@@ -98,3 +98,14 @@ For additional details on custom searches see extensions/
 
 You can change keybindings by editing their values in a python dictionary. This
 only applies to the gtk3 interface. The key names are those used by gtk3.
+
+
+# Other options
+
+## defn\_seperator
+
+This will print out before each definition
+
+## result\_sperator
+
+This will print out before each result

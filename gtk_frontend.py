@@ -36,7 +36,7 @@ class TextViewWindow(Gtk.Window):
         self.grid = Gtk.Grid()
         self.add(self.grid)
 
-        self.set_default_size(400,400)
+        self.set_default_size(400,740)
 
         self.text = text
         self.create_textview(text)
@@ -88,6 +88,7 @@ class TextViewWindow(Gtk.Window):
         self.text = new_text
         self.textbuffer.set_text(new_text)
         self.set_font_size()
+        self.to_begining()
 
     def history_back(self):
         if self.text_hist_pos > 0:
@@ -114,6 +115,14 @@ class TextViewWindow(Gtk.Window):
         self.textbuffer.insert_at_cursor("\n" + new_text)
         self.to_begining()
 
+    def center(self):
+        cur = self.textbuffer.get_insert()
+        self.textview.scroll_to_mark(cur, 0, True, 0, .5)
+
+    def top(self):
+        cur = self.textbuffer.get_insert()
+        self.textview.scroll_to_mark(cur, 0, True, 0, 0)
+
     def add_mark(self, widget, event):
         cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
         key_name = Gdk.keyval_name(event.keyval)
@@ -134,7 +143,7 @@ class TextViewWindow(Gtk.Window):
             words = japanese.start_lookup(word[0:min(len(word), 20)],
                     self.con)
             if len(words) == 0:
-                return
+                return ""
             new = "\n".join(map(lambda x: str(x), words))
         elif type_lookup == 1:
             results = sql_wrapper.like_search(word, self.con)
@@ -178,25 +187,25 @@ class TextViewWindow(Gtk.Window):
             return
         self.cur_search_text = search.entry.get_text()
         search.hide()
-        self.to_next_forward_search()
+        self.to_next_forward_search(self.cur_search_text)
 
-    def to_next_forward_search(self):
-        if self.cur_search_text == None:
+    def to_next_forward_search(self, text_to_find):
+        if text_to_find == None:
             return
         cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
         cur_cur.forward_chars(1)
-        forward = cur_cur.forward_search(self.cur_search_text, 0,\
+        forward = cur_cur.forward_search(text_to_find, 0,\
                 self.textbuffer.get_end_iter())
         if forward == None:
             return
         cur_cur = forward[0]
         self.textbuffer.place_cursor(cur_cur)
 
-    def to_previous_backward_search(self):
-        if self.cur_search_text == None:
+    def to_previous_backward_search(self, text_to_find):
+        if text_to_find == None:
             return
         cur_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
-        forward = cur_cur.backward_search(self.cur_search_text, 0,\
+        forward = cur_cur.backward_search(text_to_find, 0,\
                 self.textbuffer.get_start_iter())
         if forward == None:
             return
@@ -326,13 +335,21 @@ class TextViewWindow(Gtk.Window):
         elif key_name == config.keybindings['search_text']:
             self.search_text()
         elif key_name == config.keybindings['next_text_search']:
-            self.to_next_forward_search()
+            self.to_next_forward_search(self.cur_search_text)
         elif key_name == config.keybindings['previous_text_search']:
-            self.to_previous_backward_search()
+            self.to_previous_backward_search(self.cur_search_text)
         elif key_name == config.keybindings['history_back']:
             self.history_back()
         elif key_name == config.keybindings['history_forward']:
             self.history_forward()
+        elif key_name == config.keybindings['next_defn']:
+            self.to_next_forward_search(config.defn_seperator)
+        elif key_name == config.keybindings['previous_defn']:
+            self.to_previous_backward_search(config.defn_seperator)
+        elif key_name == config.keybindings['next_result']:
+            self.to_next_forward_search(config.result_seperator)
+        elif key_name == config.keybindings['previous_result']:
+            self.to_previous_backward_search(config.result_seperator)
 
 
 
