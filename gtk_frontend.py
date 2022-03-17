@@ -350,6 +350,10 @@ class TextViewWindow(Gtk.Window):
             self.to_next_forward_search(config.result_seperator)
         elif key_name == config.keybindings['previous_result']:
             self.to_previous_backward_search(config.result_seperator)
+        elif key_name == config.keybindings['scroll_center']:
+            self.center()
+        elif key_name == config.keybindings['scroll_top']:
+            self.top()
 
 
 

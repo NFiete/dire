@@ -45,6 +45,8 @@ keybindings but it is planned.
 |K|Jump to previous definition|
 |f|Jump to next result|
 |F|Jump to previous result|
+|z|Scroll so cursor is at the center of the screen|
+|t|Scroll so cursor is at the top of the screen|
 
 ## Extending
 

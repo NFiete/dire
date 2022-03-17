@@ -35,7 +35,9 @@ keybindings = {
         'next_defn': 'J',
         'previous_defn': 'K',
         'next_result': 'f',
-        'previous_result': 'F'
+        'previous_result': 'F',
+        'scroll_top': 't',
+        'scroll_center': 'z'
         }
 
 user_defined_searches=[]
