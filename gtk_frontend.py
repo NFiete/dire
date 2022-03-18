@@ -157,8 +157,8 @@ class TextViewWindow(Gtk.Window):
 
 
 
-    def create_new_win_results(self, text):
-        win = TextViewWindow(self.title + '_0', text)
+    def create_new_win_results(self, text, title):
+        win = TextViewWindow(title.replace("\n",""), text)
         win.show_all()
 
 
@@ -333,7 +333,7 @@ class TextViewWindow(Gtk.Window):
             cur_cur2.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)
             new = self.new_win_lookup_results(cur_text, Responses.Sentance.value)
-            self.create_new_win_results(new)
+            self.create_new_win_results(new, cur_text)
         elif key_name == config.keybindings['line_search']:
             buf = self.textbuffer
             cur_cur = buf.get_iter_at_mark(buf.get_insert())
@@ -343,7 +343,7 @@ class TextViewWindow(Gtk.Window):
             cur_cur.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)[:-1]
             new = self.new_win_lookup_results(cur_text, Responses.Sentance.value)
-            self.create_new_win_results(new)
+            self.create_new_win_results(new, cur_text)
         elif key_name == config.keybindings['goto_beginning']:
             self.textbuffer.place_cursor(self.textbuffer.get_iter_at_offset(0))
         elif key_name == config.keybindings['goto_end']:
