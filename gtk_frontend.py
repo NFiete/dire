@@ -4,6 +4,7 @@ from search_dialog import SearchDialog
 
 import sys, os
 import gi
+import subprocess
 from enum import Enum
 
 gi.require_version("Gtk", "3.0")
@@ -212,6 +213,31 @@ class TextViewWindow(Gtk.Window):
         cur_cur = forward[0]
         self.textbuffer.place_cursor(cur_cur)
 
+    def copy_defn(self):
+        forward_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
+        while not forward_cur.ends_line():
+            forward_cur.forward_char()
+        forward = forward_cur.forward_search(config.defn_seperator, 0,\
+                self.textbuffer.get_end_iter())
+
+        if forward == None:
+            return
+        forward = forward[0]
+
+        backward_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
+        while not backward_cur.ends_line():
+            backward_cur.forward_char()
+        backward = backward_cur.backward_search(config.defn_seperator, 0,\
+                self.textbuffer.get_start_iter())
+
+        if backward == None:
+            backward = self.textbuffer.get_start_iter()
+        else:
+            backward = backward[0]
+        cur_text = self.textbuffer.get_text(backward, forward, False)
+        subprocess.run(['xclip', '-selection', 'clipboard', '-f'],
+                input=cur_text.encode('utf-8'))
+
 
     def on_key_release_event(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
@@ -354,6 +380,8 @@ class TextViewWindow(Gtk.Window):
             self.center()
         elif key_name == config.keybindings['scroll_top']:
             self.top()
+        elif key_name == config.keybindings['copy_defn']:
+            self.copy_defn()
 
 
 

@@ -3,7 +3,7 @@ dict_order = None
 
 defn_seperator = '@'
 
-result_seperator = '|---|'
+result_seperator = '#'
 
 
 keybindings = {
@@ -37,7 +37,8 @@ keybindings = {
         'next_result': 'f',
         'previous_result': 'F',
         'scroll_top': 't',
-        'scroll_center': 'z'
+        'scroll_center': 'z',
+        'copy_defn': 'y'
         }
 
 user_defined_searches=[]

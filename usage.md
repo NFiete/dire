@@ -47,6 +47,7 @@ keybindings but it is planned.
 |F|Jump to previous result|
 |z|Scroll so cursor is at the center of the screen|
 |t|Scroll so cursor is at the top of the screen|
+|y|Copy definition (requires xclip. This should hopefully be improved soon.)|
 
 ## Extending
 
