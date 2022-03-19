@@ -38,7 +38,8 @@ keybindings = {
         'previous_result': 'F',
         'scroll_top': 't',
         'scroll_center': 'z',
-        'copy_defn': 'y'
+        'copy_defn': 'y',
+        'search_clipboard': 'p'
         }
 
 user_defined_searches=[]

@@ -238,6 +238,15 @@ class TextViewWindow(Gtk.Window):
         subprocess.run(['xclip', '-selection', 'clipboard', '-f'],
                 input=cur_text.encode('utf-8'))
 
+    def search_clipboard(self):
+        clip = subprocess.run(['xclip', '-selection', 'clipboard', '-f', '-o'],
+                capture_output=True).stdout.decode("utf-8")
+        new = self.new_win_lookup_results(clip, Responses.Sentance.value)
+        self.text_hist.insert(self.text_hist_pos + 1, new)
+        self.text_hist_pos += 1
+        self.set_text(new)
+        self.to_begining()
+
 
     def on_key_release_event(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
@@ -382,6 +391,8 @@ class TextViewWindow(Gtk.Window):
             self.top()
         elif key_name == config.keybindings['copy_defn']:
             self.copy_defn()
+        elif key_name == config.keybindings['search_clipboard']:
+            self.search_clipboard()
 
 
 
