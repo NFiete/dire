@@ -94,6 +94,8 @@ def deconjugate_word(word, col, db):
                 if new_word not in seen:
                     possibilities.append(new_word)
                     seen.append(new_word)
+                if len(new_word) == 0:
+                    continue
                 lookup = search_word(new_word, db, col=col)
                 if len(lookup) > 0:
                     #This only runs when not an exact match Probably should
