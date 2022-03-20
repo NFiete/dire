@@ -5,6 +5,10 @@ defn_seperator = '@'
 
 result_seperator = '#'
 
+copy_command = 'xclip -selection clipboard'
+
+paste_command = 'xclip -selection clipboard -o'
+
 
 keybindings = {
         'search': 'a',

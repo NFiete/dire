@@ -109,3 +109,9 @@ This will print out before each definition
 ## result\_sperator
 
 This will print out before each result
+
+## copy\_command
+This command should copy stdin to the clipboard
+
+## paste\_command
+This command should print the contents of the clipboard to stdout

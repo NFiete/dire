@@ -235,12 +235,19 @@ class TextViewWindow(Gtk.Window):
         else:
             backward = backward[0]
         cur_text = self.textbuffer.get_text(backward, forward, False)
-        subprocess.run(['xclip', '-selection', 'clipboard', '-f'],
-                input=cur_text.encode('utf-8'))
+        try:
+            subprocess.run(config.copy_command.split(),
+                    input=cur_text.encode('utf-8'))
+        except:
+            print('failed to copy')
 
     def search_clipboard(self):
-        clip = subprocess.run(['xclip', '-selection', 'clipboard', '-f', '-o'],
-                capture_output=True).stdout.decode("utf-8")
+        try:
+            clip = subprocess.run(config.paste_command.split(),
+                    capture_output=True, timeout = 1).stdout.decode("utf-8")
+        except:
+            print('failed to get clipboard')
+            return
         new = self.new_win_lookup_results(clip, Responses.Sentance.value)
         self.text_hist.insert(self.text_hist_pos + 1, new)
         self.text_hist_pos += 1
