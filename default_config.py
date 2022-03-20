@@ -1,6 +1,5 @@
 dict_order = None
 
-
 defn_seperator = '@'
 
 result_seperator = '#'
@@ -9,6 +8,10 @@ copy_command = 'xclip -selection clipboard'
 
 paste_command = 'xclip -selection clipboard -o'
 
+width = 400
+height = 400
+
+font_size = 23
 
 keybindings = {
         'search': 'a',

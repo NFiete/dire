@@ -115,3 +115,12 @@ This command should copy stdin to the clipboard
 
 ## paste\_command
 This command should print the contents of the clipboard to stdout
+
+## width
+Default window width
+
+## height
+Default window height
+
+## font\_size
+Default font size

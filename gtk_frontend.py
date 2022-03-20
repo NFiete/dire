@@ -37,12 +37,12 @@ class TextViewWindow(Gtk.Window):
         self.grid = Gtk.Grid()
         self.add(self.grid)
 
-        self.set_default_size(400,740)
+        self.set_default_size(config.width, config.height)
 
         self.text = text
         self.create_textview(text)
         self.textview.set_editable(False)
-        self.size = 23
+        self.size = config.font_size
         self.font_tag = self.textbuffer.create_tag("font_size",
                 font_desc=Pango.FontDescription.from_string(str(self.size)))
         self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
