@@ -142,7 +142,8 @@ class TextViewWindow(Gtk.Window):
 
     def new_win_lookup_results(self, word, type_lookup):
         if type_lookup == 0:
-            words = japanese.start_lookup(word[0:min(len(word), 20)],
+            words = japanese.start_lookup(word[0:min(len(word),
+                config.max_word_len)],
                     self.con)
             if len(words) == 0:
                 return ""
@@ -354,7 +355,8 @@ class TextViewWindow(Gtk.Window):
             cur_cur2 = cur_cur.copy()
             cur_cur2.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)
-            words = japanese.start_lookup(cur_text[0:min(len(cur_text), 20)],
+            words = japanese.start_lookup(cur_text[0:min(len(cur_text),
+                config.max_word_len)],
                     self.con)
             new = ''
             seen = []

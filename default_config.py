@@ -71,3 +71,7 @@ def make_card(words, defns, sentence, context):
     context = context.replace("\n", "<br>").replace(",", ";")
     card_file.write(f'{sentance},{defn_out},{context}')
     card_file.close()
+
+
+max_word_len = 20
+

@@ -166,3 +166,9 @@ arguments:
 |defns|A list of possible definitions. Each element of a defns is a list of definitions for the given word. The order of the words is the same as that in words.|
 |sentence|The sentence as selected by finding text which starts with a element of card\_starts, and ending with a element of card\_ends|
 |context|The context as selected by finding text which starts with a element of context\_starts, and ending with a element of context\_ends|
+
+
+## max\_word\_length
+
+The maximum length to scan for a word. The bigger this is the more accurate the
+results will be, but it will be slower.
