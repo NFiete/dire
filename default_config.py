@@ -13,6 +13,8 @@ height = 400
 
 font_size = 23
 
+
+
 keybindings = {
         'search': 'a',
         'line_search': 'e',
@@ -53,3 +55,19 @@ user_defined_searches=[]
 
 user_possible_searches = []
 
+card_starts = ['。', '「', "\n", "、"]
+card_ends = ['。', '」', "\n", "、"]
+
+context_starts = ["\n"]
+context_ends = ["\n"]
+
+def make_card(words, defns, sentence, context):
+    card_file = open('card_file', "a")
+    defn_out = ''
+    for word,defn in zip(words,defns):
+        fix_defn = "<br>".join(defn).replace("\n", "<br>").replace(",", ";")
+        defn_out += f'<details><summary>{word}</summary>{fix_defn}</details>'
+    sentance = sentence.replace("\n", "<br>").replace(",", ";")
+    context = context.replace("\n", "<br>").replace(",", ";")
+    card_file.write(f'{sentance},{defn_out},{context}')
+    card_file.close()

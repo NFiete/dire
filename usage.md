@@ -49,6 +49,17 @@ keybindings but it is planned.
 |t|Scroll so cursor is at the top of the screen|
 |y|Copy definition (requires xclip. This should hopefully be improved soon.)|
 |p|Search clipboard (also needs xclip)|
+|c|Create flashcard (see more detail below)|
+
+
+## Creating flashcards
+
+Dire can automatically create flashcards from text. By default the flashcards
+are made to work well with anki though this can be easily customized if you use
+another flash card program. By default flashcards are created with a sentence on
+the front and definitions, and context on the back. This can also be customized.
+By default, flashcards are stored in a csv file which can easily be imported
+into anki. For more detail see [contig.md](config.md).
 
 ## Extending
 

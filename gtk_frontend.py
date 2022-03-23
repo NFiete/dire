@@ -61,6 +61,7 @@ class TextViewWindow(Gtk.Window):
         self.text_hist = [text]
         self.text_hist_pos = 0
 
+
     def set_font_size(self):
         self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
                 self.textbuffer.get_end_iter())
@@ -254,6 +255,31 @@ class TextViewWindow(Gtk.Window):
         self.set_text(new)
         self.to_begining()
 
+    def select_text(self, starts, ends):
+        forward_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
+        while not (forward_cur.get_char() in starts or forward_cur.is_end()):
+            forward_cur.forward_char()
+        if forward_cur.is_end():
+            return None
+
+        backward_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
+        while not (backward_cur.get_char() in ends or forward_cur.is_start()):
+            backward_cur.backward_char()
+
+        if backward_cur.is_start():
+            backward_cur = self.textbuffer.get_start_iter()
+        cur_text = self.textbuffer.get_text(backward_cur, forward_cur, False)
+        return cur_text
+
+    def make_card(self, text):
+        lookup = japanese.start_lookup(text[0:min(len(text), 20)],
+                self.con)
+        words = list(map(lambda x: x.entries[0].word, lookup))
+        defns = list(map(lambda x: list(map(lambda y: str(y), x.entries)), lookup))
+        context = self.select_text(config.context_starts, config.context_ends)
+        sent = self.select_text(config.card_starts, config.card_ends)
+        config.make_card(words, defns, sent, context)
+
 
     def on_key_release_event(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
@@ -400,6 +426,13 @@ class TextViewWindow(Gtk.Window):
             self.copy_defn()
         elif key_name == config.keybindings['search_clipboard']:
             self.search_clipboard()
+        elif key_name == config.keybindings['make_card']:
+            buf = self.textview.get_buffer()
+            cur_cur = buf.get_iter_at_mark(buf.get_insert())
+            cur_cur2 = cur_cur.copy()
+            cur_cur2.forward_line()
+            cur_text = buf.get_text(cur_cur, cur_cur2, False)
+            self.make_card(cur_text)
 
 
 

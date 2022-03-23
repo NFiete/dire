@@ -124,3 +124,45 @@ Default window height
 
 ## font\_size
 Default font size
+
+## card\_starts
+
+When creating a flashcard dire will select text to send as the third argument.
+The entries in card\_starts are characters where the search should stop going to
+the left. For example, if card\_starts were ['('] and I were to create a card in
+the text "(This is a example sentence)" Then the sentence sent would start with
+"(This is...".
+
+## card\_ends
+
+Similar to card\_starts except going to the right. For example, if card\_ends
+were [')'] then "(This is a example sentence)" would select text ending with
+"...sentence)".
+
+
+## context\_starts
+
+When creating a flashcard dire will select text to send as the fourth argument.
+The entries in context\_starts are characters where the search should stop going to
+the left. For example, if context\_starts were ['('] and I were to create a card in
+the text "(This is a example context)" Then the context sent would start with
+"(This is...".
+
+
+## context\_ends
+
+Similar to context\_starts except going to the right. For example, if context\_ends
+were [')'] then "(This is a example context)" would select text ending with
+"...context)".
+
+
+## make\_card
+This function will be called when creating a flashcard. It is sent four
+arguments:
+
+|Arg|Description|
+|:--- |:--- |
+|words|A list of possible words. Words are in the order they are in when looking up a word|
+|defns|A list of possible definitions. Each element of a defns is a list of definitions for the given word. The order of the words is the same as that in words.|
+|sentence|The sentence as selected by finding text which starts with a element of card\_starts, and ending with a element of card\_ends|
+|context|The context as selected by finding text which starts with a element of context\_starts, and ending with a element of context\_ends|
