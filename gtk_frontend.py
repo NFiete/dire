@@ -264,7 +264,7 @@ class TextViewWindow(Gtk.Window):
             return None
 
         backward_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
-        while not (backward_cur.get_char() in ends or forward_cur.is_start()):
+        while not (backward_cur.get_char() in ends or backward_cur.is_start()):
             backward_cur.backward_char()
 
         if backward_cur.is_start():
