@@ -83,6 +83,11 @@ def deconjugate_word(word, col, db):
     possibilities = [word]
     result = []
     num_conj = 0
+    lookup = search_word(word, db, col=col)
+    if len(lookup) > 0:
+        lookup += get_user_results(config.user_defined_searches, word,
+                word)
+        result.append(Entry_Set(lookup, len(word), num_conj))
     while len(possibilities) > 0:
         cur_word = possibilities.pop()
         for inflection in conjugations:
@@ -178,13 +183,6 @@ def sentance_search(sentance, col, db):
     i = len(sentance)
     while i > 0 and len(results) < 10:
         substring = sentance[0:i]
-        lookup = search_word(substring, db, col=col)
-        if len(lookup) > 0:
-            lookup += get_user_results(config.user_defined_searches, substring,
-                    substring)
-            results.append(Entry_Set(lookup, i, 0))
-            #This was a bad idea should put it in deconjugate word
-            #continue
         possible_words = deconjugate_word(substring, col, db)
         for word in possible_words:
             if word not in results:
