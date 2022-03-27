@@ -61,6 +61,8 @@ class TextViewWindow(Gtk.Window):
         self.text_hist = [text]
         self.text_hist_pos = 0
 
+        self.control_lock = False
+
 
     def set_font_size(self):
         self.textbuffer.apply_tag(self.font_tag, self.textbuffer.get_start_iter(),
@@ -293,11 +295,20 @@ class TextViewWindow(Gtk.Window):
 
     def on_key_release_event(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
+        if key_name == 'Control_L' or key_name == 'Control_R':
+            self.control_lock = False
+        if self.control_lock:
+            return
         if key_name == config.keybindings['edit_true']:
             self.textview.set_editable(True)
 
     def on_key_press_event(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
+        if key_name == 'Control_L' or key_name == 'Control_R':
+            self.control_lock = True
+            return
+        if self.control_lock:
+            return
         if self.next_mark:
             self.add_mark(widget, event)
             return
