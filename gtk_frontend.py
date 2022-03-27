@@ -187,6 +187,7 @@ class TextViewWindow(Gtk.Window):
         search = SearchDialog(self, 0, responses)
         response = search.run()
         if response < 0:
+            search.hide()
             return
         self.cur_search_text = search.entry.get_text()
         search.hide()
@@ -256,19 +257,23 @@ class TextViewWindow(Gtk.Window):
         self.set_text(new)
         self.to_begining()
 
-    def select_text(self, starts, ends):
+    def select_text(self, starts, ends, min_left, max_left, min_right, max_right):
         forward_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
-        while not (forward_cur.get_char() in starts or forward_cur.is_end()):
+        forward_cur.forward_chars(min_right)
+        i = 0
+        while (max_right == None or i < max_right) and \
+            not (forward_cur.get_char() in starts or forward_cur.is_end()):
             forward_cur.forward_char()
-        if forward_cur.is_end():
-            return None
+            i+=1
 
         backward_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
-        while not (backward_cur.get_char() in ends or backward_cur.is_start()):
+        backward_cur.backward_chars(min_left)
+        i = 0
+        while (max_left == None or i < max_left) and \
+            not (backward_cur.get_char() in ends or backward_cur.is_start()):
             backward_cur.backward_char()
+            i+=1
 
-        if backward_cur.is_start():
-            backward_cur = self.textbuffer.get_start_iter()
         cur_text = self.textbuffer.get_text(backward_cur, forward_cur, False)
         return cur_text
 
@@ -277,8 +282,12 @@ class TextViewWindow(Gtk.Window):
                 self.con)
         words = list(map(lambda x: x.entries[0].word, lookup))
         defns = list(map(lambda x: list(map(lambda y: str(y), x.entries)), lookup))
-        context = self.select_text(config.context_starts, config.context_ends)
-        sent = self.select_text(config.card_starts, config.card_ends)
+        context = self.select_text(config.context_starts, config.context_ends,
+                config.min_context_left, config.max_context_left,
+                config.min_context_right, config.max_context_right)
+        sent = self.select_text(config.card_starts, config.card_ends,
+                config.min_sentance_left, config.max_sentance_left,
+                config.min_sentance_right, config.max_sentance_right)
         config.make_card(words, defns, sent, context)
 
 

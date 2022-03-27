@@ -75,3 +75,15 @@ def make_card(words, defns, sentence, context):
 
 max_word_len = 20
 
+min_context_left = 100
+min_context_right = 0
+
+max_context_left = None
+max_context_right = None
+
+min_sentance_left = 5
+min_sentance_right = 5
+
+max_sentance_left = 3000
+max_sentance_right = 3000
+

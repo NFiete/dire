@@ -172,3 +172,29 @@ arguments:
 
 The maximum length to scan for a word. The bigger this is the more accurate the
 results will be, but it will be slower.
+
+## min\_context\_left
+
+The minimum number of characters to scan left when grabbing context
+
+## min\_context\_right
+
+The minimum number of characters to scan right when grabbing context
+
+## max\_context\_left
+
+The maximum number of characters to scan right when grabbing context. Set to
+None to scan to the end of the document.
+
+## min\_sentance\_left
+
+The minimum number of characters to scan left when grabbing sentance
+
+## min\_sentance\_right
+
+The minimum number of characters to scan right when grabbing sentance
+
+## max\_sentance\_left
+
+The maximum number of characters to scan right when grabbing sentance. Set to
+None to scan to the end of the document.
