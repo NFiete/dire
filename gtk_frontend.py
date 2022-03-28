@@ -314,6 +314,7 @@ class TextViewWindow(Gtk.Window):
             return
         if self.next_jump:
             self.jump_mark(key_name)
+            return
         elif key_name == config.keybindings['edit_false']:
             self.textview.set_editable(False)
         if self.textview.get_editable():
