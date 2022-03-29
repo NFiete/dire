@@ -62,6 +62,10 @@ def all_hits_to_string(all_hits):
     return '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n'.join(strs)
 
 
+def clean_query(qry):
+    return qry.replace('"', '""')
+
+
 def displayWords(wordList):
     for word in wordList:
         print(word[0])
@@ -70,6 +74,7 @@ def get_conjugations(db):
     return list(db.execute('SELECT * from conjugation'))
 
 def search_glyph(glyph, db):
+    glyph = clean_query(glyph)
     qry = f'SELECT pronunciations FROM glyphs WHERE glyph = "{glyph}"'
     results = list(db.execute(qry))
     if len(results) > 0:
@@ -80,6 +85,7 @@ def search_glyph(glyph, db):
 '''Searches word from db returning a list of hits. If allDicts is None will
 search all dictonaries, otherwise limit to allDicts'''
 def searchWord(word, db, col = 'word', allDicts = None):
+    word = clean_query(word)
     if allDicts == None:
         qry = f'SELECT * FROM dicts where {col}="{word}"'
     else:
@@ -93,25 +99,30 @@ def searchWord(word, db, col = 'word', allDicts = None):
     return list(map(lambda x: Entry(x[1], x[2], x[3], x[4]), results))
 
 def search_pronunciation(pronunciation, db):
+    pronunciation = clean_query(pronunciation)
     qry = f'SELECT * FROM dicts WHERE pronunciation="{pronunciation}"'
     results = list(db.execute(qry).fetchall())
     return list(map(lambda x: Entry(x[1], x[2], x[3], x[4]), results))
 
 def pronunciation_exists(pronunciation, db):
+    pronunciation = clean_query(pronunciation)
     qry = f'SELECT pronc FROM proncs WHERE pronc="{pronunciation}" LIMIT 1'
     return len(list(db.execute(qry).fetchall())) > 0
 
 def contains_search(term, col, db):
+    term = clean_query(term)
     qry=f'SELECT DISTINCT word FROM dicts WHERE {col} LIKE "%{term}%"'
     results = db.execute(qry).fetchall()
     return list(map(lambda x: x[0], results))
 
 
 def like_search(like_phrase, db):
+    like_phrase = clean_query(like_phrase)
     qry = "SELECT word FROM words WHERE word GLOB '" + like_phrase + "'"
     return(list(map(lambda x: x[0], db.execute(qry).fetchall())))
 
 def exists_word(word, db):
+    word = clean_query(word)
     qry = f'SELECT word FROM words WHERE word="{word}" LIMIT 1'
     return len(db.execute(qry).fetchall()) > 0
 
@@ -124,6 +135,7 @@ def startConnection():
     return(cur)
 
 def exists_start(word, col, db):
+    word = clean_query(word)
     qry = f'SELECT {col} FROM dicts WHERE {col} LIKE "{word}%" LIMIT 1'
     return len(list(db.execute(qry).fetchall())) > 0
 
