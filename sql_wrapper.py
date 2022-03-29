@@ -25,41 +25,7 @@ class Entry:
 
 
 
-def displayHits(hits):
-    for hit in hits:
-        print(toString(hit))
-        print("-------------------------------------")
 
-
-def toString(hit):
-    out = ""
-    dfs = hit[0]
-    dct = hit[1]
-    if (len(hit[0]) > 0 and len(hit[0][0]) > 0):
-        word = hit[0][0][0]
-        kana = hit[0][0][1]
-        out += dct + "\n"
-        out += word + "\n"
-        out += kana + "\n"
-        for df in dfs:
-            defs = json.loads(df[2])
-            for treuDf in defs:
-                out += treuDf + "\n"
-    return out
-
-
-def hits_to_string(hits):
-    strs=[]
-    for hit in hits:
-        strs.append(toString(hit))
-    return '---------------------------\n'.join(strs)
-
-
-def all_hits_to_string(all_hits):
-    strs=[]
-    for hit in all_hits:
-        strs.append(hits_to_string(hit))
-    return '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n'.join(strs)
 
 
 def clean_query(qry):
