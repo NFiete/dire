@@ -1,7 +1,8 @@
 # Dependencies
 
 You need to install dependencies yourself. Install gtk3, python3, and sqlite3. This
-will be different depending on what operating system you are using. These are
+will be different depending on what operating system you are using. Additionally
+for clipboard support you should install xclip. These are
 all fairly common so there is a decent chance you already have them installed.
 Additionally to run the setup script you will need wget and unzip. These are
 also fairly common.

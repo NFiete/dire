@@ -15,7 +15,11 @@ If you want to use * and ? for unknown characters press r
 
 If you want to search a definition press d
 
-Dire is licensed under GPLv3 see LICENSE for more details.
+Dire is licensed under The GNU Public License version 3 see LICENSE for more details.
+
+If you find any bugs/have any feature requests/have other issues please visit:
+    https://github.com/NFiete/dire/issues
+and open an issue.
 
 '''
 
@@ -41,9 +45,12 @@ parser.add_argument('-n', '--name', dest='name', default=None,
         help='the name for this instance')
 parser.add_argument('-s', '--search', dest='search', default=None,
         help='text to search. Will overwrite file.')
+parser.add_argument('-t', '--text', dest='text', default=None,
+        help='text to open on start')
 
 args = parser.parse_args()
 file_name = args.file
+in_text = args.text
 socket_dir = os.path.expanduser('~') + '/.config/dire/sockets/'
 if args.name == None:
     title = 'dire'
@@ -63,8 +70,9 @@ if os.path.exists(name):
     print('WARNING: removing old socket')
     cleanup()
 
-
-if file_name == None:
+if in_text != None:
+    my_text = in_text
+elif file_name == None:
     my_text = tutorial
 else:
     my_text = open(file_name, 'r').read()
