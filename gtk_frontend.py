@@ -398,13 +398,13 @@ class TextViewWindow(Gtk.Window):
             new = self.new_win_lookup_results(cur_text, Responses.Sentance.value)
             self.create_new_win_results(new, cur_text)
         elif key_name == config.keybindings['line_search']:
-            buf = self.textbuffer
-            cur_cur = buf.get_iter_at_mark(buf.get_insert())
-            cur_cur2 = cur_cur.copy()
-            cur_cur2.forward_line()
-            cur_cur.backward_line()
-            cur_cur.forward_line()
-            cur_text = buf.get_text(cur_cur, cur_cur2, False)[:-1]
+            forward_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
+            while not forward_cur.ends_line():
+                forward_cur.forward_char()
+            backward_cur = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert())
+            while not backward_cur.starts_line():
+                backward_cur.backward_char()
+            cur_text = self.textbuffer.get_text(backward_cur, forward_cur, False)
             new = self.new_win_lookup_results(cur_text, Responses.Sentance.value)
             self.create_new_win_results(new, cur_text)
         elif key_name == config.keybindings['goto_beginning']:
