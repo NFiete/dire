@@ -39,7 +39,6 @@ class TextViewWindow(Gtk.Window):
 
         self.set_default_size(config.width, config.height)
 
-        self.text = text
         self.create_textview(text)
         self.textview.set_editable(False)
         self.size = config.font_size
@@ -89,7 +88,6 @@ class TextViewWindow(Gtk.Window):
         self.textbuffer.place_cursor(self.textbuffer.get_iter_at_offset(0))
 
     def set_text(self, new_text):
-        self.text = new_text
         self.textbuffer.set_text(new_text)
         self.set_font_size()
         self.to_begining()
