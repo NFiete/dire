@@ -162,7 +162,7 @@ class TextViewWindow(Gtk.Window):
 
 
     def create_new_win_results(self, text, title):
-        win = TextViewWindow(title.replace("\n",""), text)
+        win = TextViewWindow(self.title + '-' + title.replace("\n",""), text)
         win.show_all()
 
 
