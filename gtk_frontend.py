@@ -171,7 +171,7 @@ class TextViewWindow(Gtk.Window):
                 (Gtk.STOCK_CANCEL, -1)]
         search = SearchDialog(self, default, responses)
         response = search.run()
-        if response < 0:
+        if response < 0 or len(search.entry.get_text()) == 0:
             search.hide()
             return
         new = self.new_win_lookup_results(search.entry.get_text(), response)
