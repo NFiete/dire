@@ -13,6 +13,8 @@ height = 400
 
 font_size = 23
 
+default_margin = 0
+
 
 
 keybindings = {
@@ -48,7 +50,10 @@ keybindings = {
         'scroll_top': 't',
         'scroll_center': 'z',
         'copy_defn': 'y',
-        'search_clipboard': 'p'
+        'search_clipboard': 'p',
+        'make_card': 'c',
+        'decrease_margin': 'bracketleft',
+        'increase_margin': 'bracketright'
         }
 
 user_defined_searches=[]

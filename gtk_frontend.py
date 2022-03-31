@@ -30,7 +30,7 @@ class Responses(Enum):
 
 
 class TextViewWindow(Gtk.Window):
-    def __init__(self, name, text):
+    def __init__(self, name, text, margin=config.default_margin):
         Gtk.Window.__init__(self, title=name)
         self.title = name
 
@@ -61,6 +61,9 @@ class TextViewWindow(Gtk.Window):
         self.text_hist_pos = 0
 
         self.control_lock = False
+
+        self.textview.set_left_margin(margin)
+        self.textview.set_right_margin(margin)
 
 
     def set_font_size(self):
@@ -160,7 +163,8 @@ class TextViewWindow(Gtk.Window):
 
 
     def create_new_win_results(self, text, title):
-        win = TextViewWindow(self.title + '-' + title.replace("\n",""), text)
+        win = TextViewWindow(self.title + '-' + title.replace("\n",""), text,
+                margin=self.textview.get_left_margin())
         win.show_all()
 
 
@@ -299,6 +303,17 @@ class TextViewWindow(Gtk.Window):
             return
         if key_name == config.keybindings['edit_true']:
             self.textview.set_editable(True)
+
+
+    def inc_margin(self):
+        margin = self.textview.get_left_margin()+5
+        self.textview.set_left_margin(margin)
+        self.textview.set_right_margin(margin)
+
+    def dec_margin(self):
+        margin = max(0,self.textview.get_left_margin()-5)
+        self.textview.set_left_margin(margin)
+        self.textview.set_right_margin(margin)
 
     def on_key_press_event(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
@@ -454,6 +469,10 @@ class TextViewWindow(Gtk.Window):
             cur_cur2.forward_line()
             cur_text = buf.get_text(cur_cur, cur_cur2, False)
             self.make_card(cur_text)
+        elif key_name == config.keybindings['decrease_margin']:
+            self.dec_margin()
+        elif key_name == config.keybindings['increase_margin']:
+            self.inc_margin()
 
 
 

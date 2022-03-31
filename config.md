@@ -198,3 +198,7 @@ The minimum number of characters to scan right when grabbing sentance
 
 The maximum number of characters to scan right when grabbing sentance. Set to
 None to scan to the end of the document.
+
+## defaut\_margin
+
+The default margin size

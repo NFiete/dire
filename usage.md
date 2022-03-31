@@ -50,6 +50,8 @@ keybindings but it is planned.
 |y|Copy definition (requires xclip. This should hopefully be improved soon.)|
 |p|Search clipboard (also needs xclip)|
 |c|Create flashcard (see more detail below)|
+|[|Decrease the margin size|
+|]|Increase the margin size|
 
 
 ## Creating flashcards
