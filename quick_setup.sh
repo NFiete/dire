@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 jm_url='https://foosoft.net/projects/yomichan/dl/dict/jmdict_english.zip'
 kanji_url='https://foosoft.net/projects/yomichan/dl/dict/kanjidic_english.zip'
 mkdir ./converters/dicts
