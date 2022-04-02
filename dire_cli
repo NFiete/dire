@@ -2,8 +2,18 @@
 import japanese
 import sql_wrapper
 import sys
+import os
 
 con = sql_wrapper.startConnection()
+
+if os.path.exists(os.path.expanduser('~') + '/.config/dire/config.py'):
+    sys.path.append(os.path.expanduser('~') + '/.config/dire/')
+elif os.path.exists('/usr/share/dire/config.py'):
+    sys.path.append('/usr/share/dire/')
+else:
+    print("Critical file missing config.py exiting...")
+    exit(1)
+import config
 
 if sys.argv[1] == '-g':
     results = sql_wrapper.like_search(sys.argv[2], con)
@@ -17,9 +27,17 @@ elif sys.argv[1] == '-q':
             seen.append(word.entries[0].word)
 elif sys.argv[1] == '-d':
     results = sql_wrapper.contains_search(sys.argv[2], 'definition', con)
+elif sys.argv[1] == '-c':
+    term = sys.argv[2]
+    sent = sys.argv[3]
+    context = sys.argv[4]
+    lookup = japanese.start_lookup(term, con)
+    words = list(map(lambda x: x.entries[0].word, lookup))
+    defns = list(map(lambda x: list(map(lambda y: str(y), x.entries)), lookup))
+    config.make_card(words, defns, sent, context)
+    results = ["Card Created"]
 else:
     results = japanese.start_lookup(sys.argv[1][0:min(20, len(sys.argv[1]))], con)
 
 print('\n'.join(map(str, results)))
-
 

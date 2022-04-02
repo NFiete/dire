@@ -88,17 +88,16 @@ We provide a mpv extension located as extensions/mpv\_dire.lua. Move this into
 will try to send text to a dire instance named video.
 
 
-### how dire\_send\_text works
+We also support automatic flash card creation. To set this up
+move extensions/mpv\_select\_text.py To ~/.config/mpv/scripts/ and make sure you
+have ffmpeg and imagemagick installed (if you are using linux there is a very
+high probability these are already installed). Additionally the script makes the
+assumption your Anki user is called 'User 1' (this is the default). If it is not
+make sure to change the media variable the beginning of the script.
 
-NOTE: This starts with some kind of technical stuff if you don't care how it
-works (ie you are not trying to write your own client program) then you can skip
-ahead.
-
-When launched a socket will be created in ~/.config/dire/sockets/ with the name
-of the current dire instance. When you write to the socket the gtk verison will
-read the first character and look for 's', 'a', or 'p'. It will then take the
-corresponding action described in dire\_send\_text using the rest of the string
-as the text. If none of those are found it will set the text.
+To create an Anki card press 'c' and a prompt will come up. Select the character
+you want to start lookup at and the flashcard will be created with a screenshot
+and audio in the context. For example if the prompt says '吾[0]輩[1]は[2]猫[3]で[4]あ[5]る[6]' and you want to create a flashcard for 猫 then you would type in '3' and hit enter.
 
 
 # Neovim
@@ -123,6 +122,11 @@ supported but this may change in the future.
 dire\_cli is a pure cli tool. To search a word type dire\_cli \<WORD\>. It will
 be intelligent in the search like pressing 'a' in the gtk version. You can pass
 in the -g flag to search globbing, -d to search definition, and the -q flag to list possibilities.
+
+If you use the -c flag you can create a flashcard using the settings in
+config.py. The arguments are dire\_cli -c \<TERM\> \<SENTENCE\> \<CONTEXT\>,
+were term starts with the word you want to look up (it can be conjugated and
+there can be words following it like there is when using dire).
 
 
 # Glob searching
