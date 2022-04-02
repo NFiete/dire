@@ -36,6 +36,9 @@ function make_card()
 	local out_file = media .. name
 	local out_file_img = media .. name_img
 	local command_result = run_cmd('python ~/.config/mpv/mpv_select_text.py', subs)
+	if(command_result == "None\n" ) then
+		return
+	end
 	os.execute(string.format('ffmpeg -ss %s -to %s -i \'%s\' %s', tostring(subs_start), tostring(subs_end), filename, out_file))
 	os.execute(string.format('ffmpeg -ss %s -i \'%s\' -frames:v 1 %s', subs_start, filename, out_file_img))
 	os.execute(string.format('convert %s -resize 250x %s', out_file_img, out_file_img))
