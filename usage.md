@@ -52,6 +52,7 @@ keybindings but it is planned.
 |c|Create flashcard (see more detail below)|
 |[|Decrease the margin size|
 |]|Increase the margin size|
+|T|Save the text in the current window|
 
 
 ## Creating flashcards

@@ -53,7 +53,8 @@ keybindings = {
         'search_clipboard': 'p',
         'make_card': 'c',
         'decrease_margin': 'bracketleft',
-        'increase_margin': 'bracketright'
+        'increase_margin': 'bracketright',
+        'save_current': 'T'
         }
 
 user_defined_searches=[]

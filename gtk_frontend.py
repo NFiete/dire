@@ -30,7 +30,7 @@ class Responses(Enum):
 
 
 class TextViewWindow(Gtk.Window):
-    def __init__(self, name, text, margin=config.default_margin):
+    def __init__(self, name, text, margin=config.default_margin, file_name = None):
         Gtk.Window.__init__(self, title=name)
         self.title = name
 
@@ -64,6 +64,8 @@ class TextViewWindow(Gtk.Window):
 
         self.textview.set_left_margin(margin)
         self.textview.set_right_margin(margin)
+
+        self.file_name = file_name
 
 
     def set_font_size(self):
@@ -173,7 +175,7 @@ class TextViewWindow(Gtk.Window):
                 ("Glob", Responses.Glob.value),
                 ("Defn", Responses.Defn.value),
                 (Gtk.STOCK_CANCEL, -1)]
-        search = SearchDialog(self, default, responses)
+        search = SearchDialog(self, default, responses, "Query")
         response = search.run()
         if response < 0 or len(search.entry.get_text()) == 0:
             search.hide()
@@ -188,7 +190,7 @@ class TextViewWindow(Gtk.Window):
     def search_text(self):
         responses = [("Search", Responses.Sentance.value),
                 (Gtk.STOCK_CANCEL, -1)]
-        search = SearchDialog(self, 0, responses)
+        search = SearchDialog(self, 0, responses, "Search Text")
         response = search.run()
         if response < 0:
             search.hide()
@@ -196,6 +198,28 @@ class TextViewWindow(Gtk.Window):
         self.cur_search_text = search.entry.get_text()
         search.hide()
         self.to_next_forward_search(self.cur_search_text)
+
+    def save_text(self):
+        respnses = [
+                ("Save", 0),
+                (Gtk.STOCK_CANCEL, -1)
+                ]
+        search = SearchDialog(self, 0, respnses, "Save", self.file_name)
+        response = search.run()
+        search.hide()
+        if response < 0:
+            return
+        file_name = search.entry.get_text()
+        if len(file_name) == 0:
+            return
+
+        self.file_name = file_name
+
+        f = open(file_name, "w")
+        f.write(self.textbuffer.get_text(self.textbuffer.get_start_iter(),
+            self.textbuffer.get_end_iter(), False))
+
+
 
     def to_next_forward_search(self, text_to_find):
         if text_to_find == None:
@@ -314,6 +338,10 @@ class TextViewWindow(Gtk.Window):
         margin = max(0,self.textview.get_left_margin()-5)
         self.textview.set_left_margin(margin)
         self.textview.set_right_margin(margin)
+
+    def make_global_mark(self):
+        offset = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert()).get_offset()
+        pass
 
     def on_key_press_event(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
@@ -473,6 +501,8 @@ class TextViewWindow(Gtk.Window):
             self.dec_margin()
         elif key_name == config.keybindings['increase_margin']:
             self.inc_margin()
+        elif key_name == config.keybindings['save_current']:
+            self.save_text()
 
 
 

@@ -6,8 +6,8 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 
 class SearchDialog(Gtk.Dialog):
-    def __init__(self, parent, default, options = None):
-        super().__init__(title="Search", transient_for=parent, modal=True)
+    def __init__(self, parent, default, options, title, default_text = ""):
+        super().__init__(title=title, transient_for=parent, modal=True)
 
         for option in options:
             self.add_button(option[0], option[1])
@@ -16,10 +16,11 @@ class SearchDialog(Gtk.Dialog):
 
         box = self.get_content_area()
 
-        label = Gtk.Label(label="Search")
+        label = Gtk.Label(label=title)
         box.add(label)
 
         self.entry = Gtk.Entry()
+        self.entry.set_text(default_text)
         box.add(self.entry)
 
         self.connect("key-press-event", self.enter_return)

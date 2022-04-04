@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/python3
 #Maybe change to multipocessing
 import threading
 import socket
@@ -77,7 +77,7 @@ elif file_name == None:
 else:
     my_text = open(file_name, 'r').read()
 
-win = gtk_frontend.TextViewWindow(title, my_text)
+win = gtk_frontend.TextViewWindow(title, my_text, file_name = file_name)
 if args.search != None:
     win.set_text(win.new_win_lookup_results(args.search, 0))
 win.connect("destroy", Gtk.main_quit)
