@@ -126,4 +126,5 @@ x.daemon = True
 x.start()
 win.show_all()
 Gtk.main()
+win.make_perminant_mark("#")
 exit(0)

@@ -26,6 +26,8 @@ keybindings = {
         'search_prompt': 's',
         'create_mark': 'm',
         'goto_mark': 'apostrophe',
+        'create_permanent_mark': 'M',
+        'goto_permanent_mark': 'grave',
         'goto_beginning': 'g',
         'goto_end': 'G',
         'decrease_font': 'minus',

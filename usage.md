@@ -26,6 +26,8 @@ keybindings but it is planned.
 |r|Search with globing. Supports * and ? (more detail below)|
 |m+key|Create a mark with the name of the next key|
 |'+key|Jump to mark with name key|
+|M+key|Create a mark that will be persistently saved on exit|
+|grave(\`)+key|Jump to persistently saved mark|
 |g|Jump to beginning of text|
 |G|Jump to end of text|
 |-|Decrease font size|
@@ -99,6 +101,12 @@ make sure to change the media variable the beginning of the script.
 To create an Anki card press 'c' and a prompt will come up. Select the character
 you want to start lookup at and the flashcard will be created with a screenshot
 and audio in the context. For example if the prompt says '吾[0]輩[1]は[2]猫[3]で[4]あ[5]る[6]' and you want to create a flashcard for 猫 then you would type in '3' and hit enter.
+
+
+## Misc.
+
+* Upon exit dire will save the current cursor location to the \# persistent mark
+	so you can jump to it again when you open the same file again.
 
 
 # Neovim

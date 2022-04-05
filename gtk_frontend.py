@@ -54,13 +54,17 @@ class TextViewWindow(Gtk.Window):
 
         self.next_mark = False
         self.next_jump = False
+        self.control_lock = False
+        self.next_perminant_mark = False
+        self.next_perminant_jump = False
+
+        self.command = []
 
         self.cur_search_text = None
 
         self.text_hist = [text]
         self.text_hist_pos = 0
 
-        self.control_lock = False
 
         self.textview.set_left_margin(margin)
         self.textview.set_right_margin(margin)
@@ -339,16 +343,99 @@ class TextViewWindow(Gtk.Window):
         self.textview.set_left_margin(margin)
         self.textview.set_right_margin(margin)
 
-    def make_global_mark(self):
+    def make_perminant_mark(self, mark_name):
+        if self.file_name == None:
+            # Maybe have a pop-up or something
+            print('This is not a file can\'t save a permanent mark. Please save it first')
+            return
         offset = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert()).get_offset()
-        pass
+        home = os.path.expanduser('~')
+        if os.path.exists(home + '/.local/share/dire/marks'):
+            # Maybe put this in cache?
+            file = open(home + '/.local/share/dire/marks', 'r')
+            lines = file.readlines()
+            file.close()
+        else:
+            lines = []
+        # Handle various forms of absolute paths
+        if self.file_name[0] not in ['/', '~', '.']:
+            name = f'{os.getcwd()}/{self.file_name}'
+        else:
+            name = self.file_name
+        # Eliminate (some) edge cases with weird names
+        sep_string =  ':/</>/:'
+        name_search = name + sep_string
+        for i in range(len(lines)):
+            if lines[i].startswith(name_search):
+                lines[i] = f'{name}{sep_string}{offset}{sep_string}{mark_name}'
+                write_file = open(home + '/.local/share/dire/marks', 'w')
+                write_file.writelines(lines)
+                write_file.close()
+                return
+
+        write_file = open(home + '/.local/share/dire/marks', 'a')
+
+        lines.append(f'{name}{sep_string}{offset}{sep_string}{mark_name}')
+        write_file.writelines(lines)
+        write_file.close()
+
+    def get_perminant_mark(self, mark_name):
+        if self.file_name == None:
+            # Maybe have a pop-up or something
+            print('This is not a file can\'t save a permanent mark. Please save it first')
+            return
+        home = os.path.expanduser('~')
+        # Maybe put this in cache?
+        if os.path.exists(home + '/.local/share/dire/marks'):
+            file = open(home + '/.local/share/dire/marks', 'r')
+            lines = file.readlines()
+            file.close()
+        else:
+            return None
+
+        sep_string =  ':/</>/:'
+
+        if self.file_name[0] not in ['/', '~', '.']:
+            name = f'{os.getcwd()}/{self.file_name}'
+        else:
+            name = self.file_name
+
+        name_search = name + sep_string
+
+        for line in lines:
+            if line.startswith(name_search):
+                return int(line.split(sep_string)[-2])
+
+        return None
+
+    def jump_perminant_mark(self, mark_name):
+        offset = self.get_perminant_mark(mark_name)
+        if offset != None:
+            new_iter = self.textbuffer.get_iter_at_offset(offset)
+            self.textbuffer.place_cursor(new_iter)
+
+
+    def multiple_key_command(self, key_name):
+        if self.command[0] == 'M':
+            self.make_perminant_mark(key_name)
+            self.command = []
+        elif self.command[0] == 'grave':
+            self.command = []
+            self.jump_perminant_mark(key_name)
+
+
 
     def on_key_press_event(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
+        # TODO: Fix the logic of this. Maybe have a string representing the
+        # commands and evaluate the string
         if key_name == 'Control_L' or key_name == 'Control_R':
             self.control_lock = True
             return
         if self.control_lock:
+            return
+        if len(self.command) > 0:
+            self.multiple_key_command(key_name)
             return
         if self.next_mark:
             self.add_mark(widget, event)
@@ -503,7 +590,10 @@ class TextViewWindow(Gtk.Window):
             self.inc_margin()
         elif key_name == config.keybindings['save_current']:
             self.save_text()
-
+        elif key_name == config.keybindings['create_permanent_mark']:
+            self.command.append('M')
+        elif key_name == config.keybindings['goto_permanent_mark']:
+            self.command.append('grave')
 
 
     def create_textview(self, my_text):
