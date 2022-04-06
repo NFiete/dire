@@ -7,22 +7,6 @@ import gi
 import os
 import atexit
 
-tutorial = '''Welcome to Dire!
-
-To lookup a word press s
-
-If you want to use * and ? for unknown characters press r
-
-If you want to search a definition press d
-
-Dire is licensed under The GNU Public License version 3 see LICENSE for more details.
-
-If you find any bugs/have any feature requests/have other issues please visit:
-    https://github.com/NFiete/dire/issues
-and open an issue.
-
-'''
-
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib
 import gtk_frontend
@@ -73,7 +57,7 @@ if os.path.exists(name):
 if in_text != None:
     my_text = in_text
 elif file_name == None:
-    my_text = tutorial
+    my_text = ''
 else:
     my_text = open(file_name, 'r').read()
 
