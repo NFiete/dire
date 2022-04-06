@@ -350,9 +350,10 @@ class TextViewWindow(Gtk.Window):
             return
         offset = self.textbuffer.get_iter_at_mark(self.textbuffer.get_insert()).get_offset()
         home = os.path.expanduser('~')
-        if os.path.exists(home + '/.local/share/dire/marks'):
-            # Maybe put this in cache?
-            file = open(home + '/.local/share/dire/marks', 'r')
+        if not os.path.exists(home + '/.cache/dire'):
+            os.mkdir(home + '/.cache/dire')
+        if os.path.exists(home + '/.cache/dire/marks'):
+            file = open(home + '/.cache/dire/marks', 'r')
             lines = file.readlines()
             file.close()
         else:
@@ -362,21 +363,22 @@ class TextViewWindow(Gtk.Window):
             name = f'{os.getcwd()}/{self.file_name}'
         else:
             name = self.file_name
-        # Eliminate (some) edge cases with weird names
+        # Eliminate (some) edge cases with weird names. If this doesn't work for
+        # you it is your own fault
         sep_string =  ':/</>/:'
-        name_search = name + sep_string
+        name_search = name + sep_string + mark_name + sep_string
         for i in range(len(lines)):
             if lines[i].startswith(name_search):
-                lines[i] = f'{name}{sep_string}{offset}{sep_string}{mark_name}'
-                write_file = open(home + '/.local/share/dire/marks', 'w')
+                lines[i] = f'{name}{sep_string}{mark_name}{sep_string}{offset}\n'
+                write_file = open(home + '/.cache/dire/marks', 'w')
                 write_file.writelines(lines)
+                if lines[-1][-1] != "\n":
+                    write_file.write("\n")
                 write_file.close()
                 return
 
-        write_file = open(home + '/.local/share/dire/marks', 'a')
-
-        lines.append(f'{name}{sep_string}{offset}{sep_string}{mark_name}')
-        write_file.writelines(lines)
+        write_file = open(home + '/.cache/dire/marks', 'a')
+        write_file.write(f'{name}{sep_string}{mark_name}{sep_string}{offset}\n')
         write_file.close()
 
     def get_perminant_mark(self, mark_name):
@@ -385,11 +387,12 @@ class TextViewWindow(Gtk.Window):
             print('This is not a file can\'t save a permanent mark. Please save it first')
             return
         home = os.path.expanduser('~')
+        if not os.path.exists(home + '/.cache/dire'):
+            os.mkdir(home + '/.cache/dire')
+            return None
         # Maybe put this in cache?
-        if os.path.exists(home + '/.local/share/dire/marks'):
-            file = open(home + '/.local/share/dire/marks', 'r')
-            lines = file.readlines()
-            file.close()
+        if os.path.exists(home + '/.cache/dire/marks'):
+            file = open(home + '/.cache/dire/marks', 'r')
         else:
             return None
 
@@ -400,12 +403,16 @@ class TextViewWindow(Gtk.Window):
         else:
             name = self.file_name
 
-        name_search = name + sep_string
+        name_search = name + sep_string + mark_name + sep_string
 
-        for line in lines:
+        line = file.readline()
+        while line != '':
             if line.startswith(name_search):
-                return int(line.split(sep_string)[-2])
+                file.close()
+                return int(line.split(sep_string)[-1])
+            line = file.readline()
 
+        file.close()
         return None
 
     def jump_perminant_mark(self, mark_name):

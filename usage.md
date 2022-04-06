@@ -105,7 +105,7 @@ and audio in the context. For example if the prompt says '吾[0]輩[1]は[2]猫[
 
 ## Misc.
 
-* Upon exit dire will save the current cursor location to the \# persistent mark
+* Upon exit dire will save the current cursor location to the \v persistent mark
 	so you can jump to it again when you open the same file again.
 
 
