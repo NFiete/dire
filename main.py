@@ -6,6 +6,7 @@ import argparse
 import gi
 import os
 import atexit
+import sys # Get stdin
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib
@@ -58,6 +59,8 @@ if in_text != None:
     my_text = in_text
 elif file_name == None:
     my_text = ''
+elif file_name == '-':
+    my_text = sys.stdin.read()
 else:
     my_text = open(file_name, 'r').read()
 

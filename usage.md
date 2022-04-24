@@ -9,7 +9,7 @@ Usage between them is largely similar but differs in some ways.
 ## Basic Usage
 To launch the gtk3 version you can use dire -n \<NAME\> \<FILE NAME\> to open
 the file with FILE NAME and the dire session will be named NAME. If you omit
-NAME a name will be randomly chosen. Alternatively you can use dire -s \<SEARCH\> to search the term in search. dire -t \<TEXT\> will open dire with the desired text.
+NAME a name will be randomly chosen. If the file name is - dire will read stdin. Alternatively you can use dire -s \<SEARCH\> to search the term in search. dire -t \<TEXT\> will open dire with the desired text.
 
 From here you will see the text from the file you opened. You can move the
 cursor using the arrow keys, mouse, or using a subset of the vi keybindings
