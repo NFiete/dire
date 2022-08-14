@@ -1,3 +1,5 @@
+This is a mirror. Please for patches and issues go here: [https://sr.ht/~nfiete/dire/](https://sr.ht/~nfiete/dire/)
+
 # DIRE: Dictionary Integrated Reading Environment
 
 ![basic screenshot](basic_screenshot.png)
